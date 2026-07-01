@@ -1,0 +1,57 @@
+[
+  { "id": "p1", "teamId": "t1", "name": "Emre Yıldız", "number": 10, "position": "midfielder", "goals": 5 },
+  { "id": "p2", "teamId": "t1", "name": "Deniz Acar", "number": 1, "position": "goalkeeper", "goals": 0 },
+  { "id": "p3", "teamId": "t1", "name": "Tolga Ercan", "number": 4, "position": "defender", "goals": 1 },
+  { "id": "p4", "teamId": "t1", "name": "Yusuf Bozkurt", "number": 5, "position": "defender", "goals": 0 },
+  { "id": "p5", "teamId": "t1", "name": "Cem Aydın", "number": 8, "position": "midfielder", "goals": 3 },
+  { "id": "p6", "teamId": "t1", "name": "Barış Tekin", "number": 9, "position": "forward", "goals": 7 },
+
+  { "id": "p7", "teamId": "t2", "name": "Burak Demir", "number": 6, "position": "midfielder", "goals": 2 },
+  { "id": "p8", "teamId": "t2", "name": "Ali Korkmaz", "number": 1, "position": "goalkeeper", "goals": 0 },
+  { "id": "p9", "teamId": "t2", "name": "Sinan Polat", "number": 3, "position": "defender", "goals": 0 },
+  { "id": "p10", "teamId": "t2", "name": "Volkan Eren", "number": 4, "position": "defender", "goals": 1 },
+  { "id": "p11", "teamId": "t2", "name": "Kaan Yılmaz", "number": 7, "position": "midfielder", "goals": 4 },
+  { "id": "p12", "teamId": "t2", "name": "Ozan Çetin", "number": 11, "position": "forward", "goals": 6 },
+
+  { "id": "p13", "teamId": "t3", "name": "Kerem Aktaş", "number": 8, "position": "midfielder", "goals": 4 },
+  { "id": "p14", "teamId": "t3", "name": "Efe Sönmez", "number": 12, "position": "goalkeeper", "goals": 0 },
+  { "id": "p15", "teamId": "t3", "name": "Murat Güneş", "number": 2, "position": "defender", "goals": 0 },
+  { "id": "p16", "teamId": "t3", "name": "Berk Aslan", "number": 5, "position": "defender", "goals": 2 },
+  { "id": "p17", "teamId": "t3", "name": "Arda Koç", "number": 10, "position": "midfielder", "goals": 3 },
+  { "id": "p18", "teamId": "t3", "name": "Furkan Şen", "number": 9, "position": "forward", "goals": 5 },
+
+  { "id": "p19", "teamId": "t4", "name": "Onur Şahin", "number": 10, "position": "midfielder", "goals": 6 },
+  { "id": "p20", "teamId": "t4", "name": "Selim Doğan", "number": 1, "position": "goalkeeper", "goals": 0 },
+  { "id": "p21", "teamId": "t4", "name": "Eren Tunç", "number": 3, "position": "defender", "goals": 0 },
+  { "id": "p22", "teamId": "t4", "name": "Uğur Çelik", "number": 6, "position": "defender", "goals": 1 },
+  { "id": "p23", "teamId": "t4", "name": "Taha Yavuz", "number": 8, "position": "midfielder", "goals": 2 },
+  { "id": "p24", "teamId": "t4", "name": "Doruk Ay", "number": 7, "position": "forward", "goals": 8 },
+
+  { "id": "p25", "teamId": "t5", "name": "Mert Kaya", "number": 7, "position": "forward", "goals": 9 },
+  { "id": "p26", "teamId": "t5", "name": "Hasan Türk", "number": 1, "position": "goalkeeper", "goals": 0 },
+  { "id": "p27", "teamId": "t5", "name": "Emir Balcı", "number": 4, "position": "defender", "goals": 0 },
+  { "id": "p28", "teamId": "t5", "name": "Çağan Er", "number": 5, "position": "defender", "goals": 1 },
+  { "id": "p29", "teamId": "t5", "name": "Bora Kılıç", "number": 8, "position": "midfielder", "goals": 3 },
+  { "id": "p30", "teamId": "t5", "name": "Tarık Uçar", "number": 11, "position": "midfielder", "goals": 2 },
+
+  { "id": "p31", "teamId": "t6", "name": "Caner Öz", "number": 9, "position": "forward", "goals": 4 },
+  { "id": "p32", "teamId": "t6", "name": "Görkem Ak", "number": 1, "position": "goalkeeper", "goals": 0 },
+  { "id": "p33", "teamId": "t6", "name": "Yiğit Bal", "number": 2, "position": "defender", "goals": 0 },
+  { "id": "p34", "teamId": "t6", "name": "Mustafa Can", "number": 3, "position": "defender", "goals": 0 },
+  { "id": "p35", "teamId": "t6", "name": "Alperen Su", "number": 6, "position": "midfielder", "goals": 2 },
+  { "id": "p36", "teamId": "t6", "name": "Erdem Naz", "number": 10, "position": "midfielder", "goals": 3 },
+
+  { "id": "p37", "teamId": "t7", "name": "Serkan Bulut", "number": 11, "position": "forward", "goals": 10 },
+  { "id": "p38", "teamId": "t7", "name": "Oğuz Kara", "number": 1, "position": "goalkeeper", "goals": 0 },
+  { "id": "p39", "teamId": "t7", "name": "Kuzey Demirtaş", "number": 4, "position": "defender", "goals": 1 },
+  { "id": "p40", "teamId": "t7", "name": "Ege Akın", "number": 5, "position": "defender", "goals": 0 },
+  { "id": "p41", "teamId": "t7", "name": "Sarp Yalçın", "number": 8, "position": "midfielder", "goals": 4 },
+  { "id": "p42", "teamId": "t7", "name": "Mehmet Ünal", "number": 9, "position": "forward", "goals": 5 },
+
+  { "id": "p43", "teamId": "t8", "name": "Hakan Arslan", "number": 10, "position": "midfielder", "goals": 3 },
+  { "id": "p44", "teamId": "t8", "name": "İlker Boz", "number": 1, "position": "goalkeeper", "goals": 0 },
+  { "id": "p45", "teamId": "t8", "name": "Recep Toprak", "number": 3, "position": "defender", "goals": 0 },
+  { "id": "p46", "teamId": "t8", "name": "Tunahan Gül", "number": 5, "position": "defender", "goals": 1 },
+  { "id": "p47", "teamId": "t8", "name": "Batuhan Er", "number": 7, "position": "midfielder", "goals": 2 },
+  { "id": "p48", "teamId": "t8", "name": "Yağız Duman", "number": 9, "position": "forward", "goals": 6 }
+]

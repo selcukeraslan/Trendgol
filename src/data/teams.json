@@ -1,0 +1,82 @@
+[
+  {
+    "id": "t1",
+    "name": "Şimşekler SK",
+    "logoUrl": "",
+    "color": "#22c55e",
+    "captain": "Emre Yıldız",
+    "description": "Hızlı kanat oyunu ve yüksek tempolu presi ile tanınan iddialı bir ekip.",
+    "photoUrl": "",
+    "createdAt": "2026-01-10T10:00:00.000Z"
+  },
+  {
+    "id": "t2",
+    "name": "Gece Kartalları",
+    "logoUrl": "",
+    "color": "#3b82f6",
+    "captain": "Burak Demir",
+    "description": "Sağlam defans ve disiplinli oyun anlayışıyla ligin en zorlu rakiplerinden.",
+    "photoUrl": "",
+    "createdAt": "2026-01-12T10:00:00.000Z"
+  },
+  {
+    "id": "t3",
+    "name": "Anadolu Yıldızları",
+    "logoUrl": "",
+    "color": "#ef4444",
+    "captain": "Kerem Aktaş",
+    "description": "Genç ve dinamik kadrosuyla sürpriz sonuçlara imza atan bir takım.",
+    "photoUrl": "",
+    "createdAt": "2026-01-15T10:00:00.000Z"
+  },
+  {
+    "id": "t4",
+    "name": "Boğaziçi United",
+    "logoUrl": "",
+    "color": "#a855f7",
+    "captain": "Onur Şahin",
+    "description": "Topa sahip olmayı seven, teknik futbol oynayan tecrübeli bir kadro.",
+    "photoUrl": "",
+    "createdAt": "2026-01-18T10:00:00.000Z"
+  },
+  {
+    "id": "t5",
+    "name": "Yıldırım Spor",
+    "logoUrl": "",
+    "color": "#f59e0b",
+    "captain": "Mert Kaya",
+    "description": "Kontra ataklardaki etkinliğiyle rakiplerine göz açtırmayan bir ekip.",
+    "photoUrl": "",
+    "createdAt": "2026-01-20T10:00:00.000Z"
+  },
+  {
+    "id": "t6",
+    "name": "Kartal Yuvası",
+    "logoUrl": "",
+    "color": "#14b8a6",
+    "captain": "Caner Öz",
+    "description": "Takım ruhu ve mücadeleci karakteriyle her maça asılan bir takım.",
+    "photoUrl": "",
+    "createdAt": "2026-01-22T10:00:00.000Z"
+  },
+  {
+    "id": "t7",
+    "name": "Fırtına FC",
+    "logoUrl": "",
+    "color": "#ec4899",
+    "captain": "Serkan Bulut",
+    "description": "Hücum gücü yüksek, gol yollarında üretken bir kadroya sahip.",
+    "photoUrl": "",
+    "createdAt": "2026-01-25T10:00:00.000Z"
+  },
+  {
+    "id": "t8",
+    "name": "Aslanlar Takımı",
+    "logoUrl": "",
+    "color": "#eab308",
+    "captain": "Hakan Arslan",
+    "description": "Deneyimli oyuncularıyla istikrarlı sonuçlar alan köklü bir ekip.",
+    "photoUrl": "",
+    "createdAt": "2026-01-28T10:00:00.000Z"
+  }
+]

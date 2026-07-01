@@ -1,0 +1,80 @@
+[
+  {
+    "id": "b1",
+    "slug": "sezon-acilisi-coskuyla-basladi",
+    "title": "Sezon Açılışı Coşkuyla Başladı",
+    "excerpt": "Yeni sezonun ilk haftası nefes kesen maçlara sahne oldu. İşte açılış haftasının öne çıkanları.",
+    "content": "Halı saha ligimizin yeni sezonu, dolu tribünler ve yüksek tempolu maçlarla başladı. İlk hafta oynanan dört karşılaşmada toplam 28 gol görüldü. Şimşekler SK, Gece Kartalları karşısında 4-3'lük nefes kesen bir galibiyet aldı. Fırtına FC ise Aslanlar Takımı'nı 6-2 mağlup ederek haftanın farklı skoruna imza attı.\n\nLig yönetimi, bu sezon ödül havuzunun artırıldığını ve şampiyon takıma rekor bir ödül verileceğini açıkladı.",
+    "coverImageUrl": "",
+    "category": "Haberler",
+    "author": "Lig Yönetimi",
+    "publishedAt": "2026-06-08T09:00:00.000Z",
+    "featured": true,
+    "published": true
+  },
+  {
+    "id": "b2",
+    "slug": "haftanin-maci-simsekler-gece-kartallari",
+    "title": "Haftanın Maçı: Şimşekler SK - Gece Kartalları",
+    "excerpt": "Açılış haftasının en çekişmeli maçında kazanan son dakikalarda belli oldu.",
+    "content": "İki iddialı ekibin karşılaşmasında goller birbirini kovaladı. Şimşekler SK'nın forveti Barış Tekin, attığı iki golle maçın yıldızı oldu. Gece Kartalları son dakikalarda baskıyı artırsa da beraberlik golünü bulamadı.\n\nMaç sonu konuşan kaptan Emre Yıldız, takım olarak hedeflerinin şampiyonluk olduğunu vurguladı.",
+    "coverImageUrl": "",
+    "category": "Maç Özeti",
+    "author": "Spor Servisi",
+    "publishedAt": "2026-06-09T12:00:00.000Z",
+    "featured": true,
+    "published": true
+  },
+  {
+    "id": "b3",
+    "slug": "gol-krali-yarisinda-durum",
+    "title": "Gol Kralı Yarışında Son Durum",
+    "excerpt": "İlk haftaların ardından gol krallığı yarışı kızıştı. İşte zirvedeki isimler.",
+    "content": "Sezon başından bu yana en çok gol atan oyuncular listesinde Fırtına FC'den Serkan Bulut zirvede yer alıyor. Onu Yıldırım Spor'dan Mert Kaya takip ediyor.\n\nGol krallığı yarışının sezon sonuna kadar çekişmeli geçmesi bekleniyor.",
+    "coverImageUrl": "",
+    "category": "İstatistik",
+    "author": "Spor Servisi",
+    "publishedAt": "2026-06-22T10:30:00.000Z",
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "b4",
+    "slug": "roportaj-kaptan-onur-sahin",
+    "title": "Röportaj: Kaptan Onur Şahin",
+    "excerpt": "Boğaziçi United kaptanı Onur Şahin ile takımın hedeflerini ve sezon beklentilerini konuştuk.",
+    "content": "Boğaziçi United'ın tecrübeli kaptanı Onur Şahin, takımın bu sezon iddialı olduğunu belirtti. 'Topa sahip olmayı seven bir takımız. Oyun disiplinimizi korursak iyi yerlere geleceğimize inanıyorum' dedi.\n\nŞahin, ligin organizasyon kalitesinden de övgüyle bahsetti.",
+    "coverImageUrl": "",
+    "category": "Röportaj",
+    "author": "Lig Yönetimi",
+    "publishedAt": "2026-06-25T14:00:00.000Z",
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "b5",
+    "slug": "4-hafta-fikstur-aciklandi",
+    "title": "4. Hafta Fikstürü Açıklandı",
+    "excerpt": "Önümüzdeki haftanın maç programı belli oldu. Tüm maçlar ve saatler haberimizde.",
+    "content": "Ligin 4. hafta programı açıklandı. Hafta, Şimşekler SK ile Boğaziçi United arasındaki zirve mücadelesine sahne olacak.\n\nMaçların tamamı hafta sonu oynanacak. Detaylı fikstür için fikstür sayfamızı ziyaret edebilirsiniz.",
+    "coverImageUrl": "",
+    "category": "Duyuru",
+    "author": "Lig Yönetimi",
+    "publishedAt": "2026-06-28T11:00:00.000Z",
+    "featured": false,
+    "published": true
+  },
+  {
+    "id": "b6",
+    "slug": "yeni-sponsor-anlasmasi-yolda",
+    "title": "Yeni Sponsor Anlaşması Yolda",
+    "excerpt": "Lig yönetimi, yeni sezon için görüşülen sponsorluk anlaşmalarına dair bilgi verdi. (Taslak)",
+    "content": "Lig yönetimi, ödül havuzunu daha da büyütmek için yeni sponsorlarla görüşmelerin sürdüğünü duyurdu. Anlaşmalar kesinleştiğinde detaylar paylaşılacak.\n\nBu yazı henüz taslak aşamasındadır.",
+    "coverImageUrl": "",
+    "category": "Duyuru",
+    "author": "Lig Yönetimi",
+    "publishedAt": "2026-06-29T16:00:00.000Z",
+    "featured": false,
+    "published": false
+  }
+]
