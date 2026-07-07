@@ -38,6 +38,8 @@ export default function AdminTeamsPage() {
 
   async function handleDelete(team: Team) {
     await removeTeam(team.id);
+    // Kaskad silme oyuncuları da kaldırdı; bellekteki listeyi tazele.
+    await loadPlayers();
     toast.success(`${team.name} silindi.`);
   }
 

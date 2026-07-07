@@ -4,12 +4,20 @@
   "prizePool": "50.000 ₺",
   "entryFee": "2.500 ₺",
   "perMatchFee": "150 ₺",
-  "aboutText": "Halı Saha Ligi; amatör futbolu profesyonel bir organizasyon anlayışıyla buluşturan, ücretli katılımlı ve para ödüllü bir liglerdir. Adil fikstür, şeffaf puanlama ve güvenilir ödeme sistemiyle her hafta sahada heyecanı yaşatıyoruz. Amacımız; dostluğu, rekabeti ve futbol tutkusunu en üst seviyede bir araya getirmek.",
+  "aboutText": "TrendgoLig; amatör futbolu profesyonel bir organizasyon anlayışıyla buluşturan, ücretli katılımlı ve para ödüllü bir liglerdir. Adil fikstür, şeffaf puanlama ve güvenilir ödeme sistemiyle her hafta sahada heyecanı yaşatıyoruz. Amacımız; dostluğu, rekabeti ve futbol tutkusunu en üst seviyede bir araya getirmek.",
   "contact": {
     "phone": "+90 555 123 45 67",
     "email": "iletisim@halisahaligi.com",
     "address": "Spor Kompleksi, Atatürk Mah. Stadyum Cad. No:1, İstanbul",
     "instagram": "https://instagram.com/halisahaligi",
     "whatsapp": "https://wa.me/905551234567"
-  }
+  },
+  "sponsors": [
+    "SPOR A.Ş.",
+    "HALI SAHA+",
+    "GOLCÜ",
+    "FUTBOL360",
+    "SAHA MARKET",
+    "TEKNİK SPOR"
+  ]
 }

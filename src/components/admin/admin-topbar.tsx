@@ -24,8 +24,8 @@ export function AdminTopbar() {
   const user = useAuthStore((s) => s.user);
   const logout = useAuthStore((s) => s.logout);
 
-  function handleLogout() {
-    logout();
+  async function handleLogout() {
+    await logout();
     router.replace("/admin/giris");
   }
 
@@ -71,7 +71,7 @@ export function AdminTopbar() {
         <ThemeToggle />
         {user ? (
           <span className="hidden text-sm text-muted-foreground sm:inline">
-            {user}
+            {user.name}
           </span>
         ) : null}
         <Button variant="outline" size="sm" onClick={handleLogout}>

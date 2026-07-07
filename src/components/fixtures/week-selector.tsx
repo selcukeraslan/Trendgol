@@ -17,6 +17,7 @@ export function WeekSelector({ weeks, value, onChange }: WeekSelectorProps) {
           key={week}
           type="button"
           onClick={() => onChange(week)}
+          aria-pressed={week === value}
           className={cn(
             "shrink-0 rounded-full border px-4 py-2 text-sm font-medium transition-colors",
             week === value

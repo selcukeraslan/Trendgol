@@ -21,10 +21,10 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://halisahaligi.com"),
+  metadataBase: new URL("https://trendgolig.com"),
   title: {
-    default: "Halı Saha Ligi — Para Ödüllü Futbol Ligi",
-    template: "%s | Halı Saha Ligi",
+    default: "TrendgoLig — Para Ödüllü Futbol Ligi",
+    template: "%s | TrendgoLig",
   },
   description:
     "Ücretli katılımlı, para ödüllü halı saha futbol ligi. Fikstür, puan durumu, takımlar, blog ve daha fazlası.",
@@ -39,8 +39,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "tr_TR",
-    siteName: "Halı Saha Ligi",
-    title: "Halı Saha Ligi — Para Ödüllü Futbol Ligi",
+    siteName: "TrendgoLig",
+    title: "TrendgoLig — Para Ödüllü Futbol Ligi",
     description:
       "Ücretli katılımlı, para ödüllü halı saha futbol ligi. Takımını kur, sahaya çık, ödülü kap.",
   },

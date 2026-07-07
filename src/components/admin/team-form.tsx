@@ -3,14 +3,15 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
 import type { Team } from "@/types";
+import { teamSchema, type TeamFormValues } from "@/schemas/team";
 import { useTeamStore } from "@/store/teamStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ImagePreview } from "@/components/common/image-preview";
 import {
   Dialog,
   DialogClose,
@@ -28,17 +29,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-const teamSchema = z.object({
-  name: z.string().min(2, "Takım adı en az 2 karakter olmalı."),
-  captain: z.string().min(2, "Kaptan adı gerekli."),
-  color: z.string().regex(/^#[0-9a-fA-F]{6}$/, "Geçerli bir renk seçin."),
-  description: z.string().min(5, "Kısa bir açıklama girin."),
-  logoUrl: z.string().optional(),
-  photoUrl: z.string().optional(),
-});
-
-type TeamFormValues = z.infer<typeof teamSchema>;
 
 function toDefaults(team?: Team): TeamFormValues {
   return {
@@ -167,6 +157,29 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
                   <FormControl>
                     <Input placeholder="https://..." {...field} />
                   </FormControl>
+                  <ImagePreview
+                    url={field.value}
+                    alt="Logo önizleme"
+                    className="h-24 w-24"
+                  />
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="photoUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Takım Fotoğrafı URL (opsiyonel)</FormLabel>
+                  <FormControl>
+                    <Input placeholder="https://..." {...field} />
+                  </FormControl>
+                  <ImagePreview
+                    url={field.value}
+                    alt="Takım fotoğrafı önizleme"
+                    className="h-32"
+                  />
                   <FormMessage />
                 </FormItem>
               )}

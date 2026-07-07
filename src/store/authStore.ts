@@ -1,36 +1,39 @@
-// Placeholder/mock kimlik doğrulama. Gerçek backend gelince burası gerçek
-// oturum/token yönetimine bağlanacak; bileşen arayüzü (login/logout) aynı kalır.
+// Kimlik doğrulama store'u. Oturum yönetimini authService'e devreder; böylece
+// backend (Supabase) geldiğinde yalnızca authService değişir, store değişmez.
 
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+
+import type { AuthUser, Credentials } from "@/lib/auth/authService";
+import { signIn, signOut, getSession } from "@/lib/auth/authService";
 
 interface AuthState {
+  user: AuthUser | null;
   isAuthenticated: boolean;
-  user: string | null;
-  /** Persist verisi tarayıcıda yüklendi mi? (SSR/hydration koruması) */
+  /** Oturum bilgisi tarayıcıda yüklendi mi? (SSR/hydration koruması) */
   hasHydrated: boolean;
-  login: (user: string) => void;
-  logout: () => void;
-  setHasHydrated: (value: boolean) => void;
+  hydrate: () => Promise<void>;
+  login: (credentials: Credentials) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
-export const useAuthStore = create<AuthState>()(
-  persist(
-    (set) => ({
-      isAuthenticated: false,
-      user: null,
-      hasHydrated: false,
-      login: (user) => set({ isAuthenticated: true, user }),
-      logout: () => set({ isAuthenticated: false, user: null }),
-      setHasHydrated: (value) => set({ hasHydrated: value }),
-    }),
-    {
-      name: "halisaha:auth",
-      partialize: (state) => ({
-        isAuthenticated: state.isAuthenticated,
-        user: state.user,
-      }),
-      onRehydrateStorage: () => (state) => state?.setHasHydrated(true),
-    },
-  ),
-);
+export const useAuthStore = create<AuthState>((set) => ({
+  user: null,
+  isAuthenticated: false,
+  hasHydrated: false,
+  hydrate: async () => {
+    const session = await getSession();
+    set({
+      user: session?.user ?? null,
+      isAuthenticated: !!session,
+      hasHydrated: true,
+    });
+  },
+  login: async (credentials) => {
+    const session = await signIn(credentials);
+    set({ user: session.user, isAuthenticated: true });
+  },
+  logout: async () => {
+    await signOut();
+    set({ user: null, isAuthenticated: false });
+  },
+}));

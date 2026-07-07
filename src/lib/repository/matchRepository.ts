@@ -1,23 +1,109 @@
-import type { Match, MatchStatus } from "@/types";
-import matchesSeed from "@/data/matches.json";
-import { createCollection } from "./base";
+import type { Match, MatchScorer, MatchStatus } from "@/types";
+import { getSupabase } from "@/lib/supabase/client";
 
-const collection = createCollection<Match>(
-  "matches",
-  matchesSeed as unknown as Match[],
-  "m",
-);
+const TABLE = "matches";
 
-export const getMatches = collection.getAll;
-export const getMatchById = collection.getById;
-export const createMatch = collection.create;
-export const updateMatch = collection.update;
-export const deleteMatch = collection.remove;
+interface MatchRow {
+  id: string;
+  week: number;
+  home_team_id: string;
+  away_team_id: string;
+  date: string;
+  time: string;
+  venue: string;
+  status: string;
+  home_score: number | null;
+  away_score: number | null;
+  scorers: MatchScorer[] | null;
+}
+
+function fromRow(r: MatchRow): Match {
+  return {
+    id: r.id,
+    week: r.week,
+    homeTeamId: r.home_team_id,
+    awayTeamId: r.away_team_id,
+    date: r.date,
+    time: r.time,
+    venue: r.venue,
+    status: r.status as MatchStatus,
+    homeScore: r.home_score,
+    awayScore: r.away_score,
+    scorers: r.scorers ?? [],
+  };
+}
+
+function toRow(input: Partial<Omit<Match, "id">>): Record<string, unknown> {
+  const patch: Record<string, unknown> = {};
+  if (input.week !== undefined) patch.week = input.week;
+  if (input.homeTeamId !== undefined) patch.home_team_id = input.homeTeamId;
+  if (input.awayTeamId !== undefined) patch.away_team_id = input.awayTeamId;
+  if (input.date !== undefined) patch.date = input.date;
+  if (input.time !== undefined) patch.time = input.time;
+  if (input.venue !== undefined) patch.venue = input.venue;
+  if (input.status !== undefined) patch.status = input.status;
+  if (input.homeScore !== undefined) patch.home_score = input.homeScore;
+  if (input.awayScore !== undefined) patch.away_score = input.awayScore;
+  if (input.scorers !== undefined) patch.scorers = input.scorers;
+  return patch;
+}
+
+export async function getMatches(): Promise<Match[]> {
+  const { data, error } = await getSupabase()
+    .from(TABLE)
+    .select("*")
+    .order("week", { ascending: true });
+  if (error) throw new Error(error.message);
+  return (data as MatchRow[]).map(fromRow);
+}
+
+export async function getMatchById(id: string): Promise<Match | null> {
+  const { data, error } = await getSupabase()
+    .from(TABLE)
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) throw new Error(error.message);
+  return data ? fromRow(data as MatchRow) : null;
+}
+
+export async function createMatch(input: Omit<Match, "id">): Promise<Match> {
+  const { data, error } = await getSupabase()
+    .from(TABLE)
+    .insert(toRow(input))
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return fromRow(data as MatchRow);
+}
+
+export async function updateMatch(
+  id: string,
+  input: Partial<Omit<Match, "id">>,
+): Promise<Match> {
+  const { data, error } = await getSupabase()
+    .from(TABLE)
+    .update(toRow(input))
+    .eq("id", id)
+    .select("*")
+    .single();
+  if (error) throw new Error(error.message);
+  return fromRow(data as MatchRow);
+}
+
+export async function deleteMatch(id: string): Promise<void> {
+  const { error } = await getSupabase().from(TABLE).delete().eq("id", id);
+  if (error) throw new Error(error.message);
+}
 
 /** Belirli bir haftanın maçlarını döner. */
 export async function getMatchesByWeek(week: number): Promise<Match[]> {
-  const all = await collection.getAll();
-  return all.filter((match) => match.week === week);
+  const { data, error } = await getSupabase()
+    .from(TABLE)
+    .select("*")
+    .eq("week", week);
+  if (error) throw new Error(error.message);
+  return (data as MatchRow[]).map(fromRow);
 }
 
 /** Maç skorunu girer ve durumu "oynandı" olarak işaretler. */
@@ -26,14 +112,10 @@ export async function updateMatchScore(
   homeScore: number,
   awayScore: number,
 ): Promise<Match> {
-  return collection.update(id, {
-    homeScore,
-    awayScore,
-    status: "played",
-  });
+  return updateMatch(id, { homeScore, awayScore, status: "played" });
 }
 
-/** Maç durumunu günceller. "Oynandı" dışına alınırsa skorlar temizlenir. */
+/** Maç durumunu günceller. "Oynandı" dışına alınırsa skor ve golcüler temizlenir. */
 export async function updateMatchStatus(
   id: string,
   status: MatchStatus,
@@ -41,6 +123,6 @@ export async function updateMatchStatus(
   const patch: Partial<Match> =
     status === "played"
       ? { status }
-      : { status, homeScore: null, awayScore: null };
-  return collection.update(id, patch);
+      : { status, homeScore: null, awayScore: null, scorers: [] };
+  return updateMatch(id, patch);
 }

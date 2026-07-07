@@ -10,6 +10,7 @@ import { getTeams, getTeamById } from "@/lib/repository/teamRepository";
 import { getPlayersByTeam } from "@/lib/repository/playerRepository";
 import { getMatches } from "@/lib/repository/matchRepository";
 import { calculateStandings } from "@/lib/standings";
+import { buildPlayerGoals } from "@/lib/scorers";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { EmptyState } from "@/components/common/empty-state";
@@ -81,6 +82,7 @@ export default function TeamDetailPage() {
 
   const standings = calculateStandings(teams, matches);
   const standing = standings.find((row) => row.teamId === team.id);
+  const goalsByPlayer = buildPlayerGoals(matches);
 
   const recentMatches = matches
     .filter(
@@ -157,7 +159,7 @@ export default function TeamDetailPage() {
         {/* Kadro */}
         <section>
           <SectionTitle>Kadro</SectionTitle>
-          <PlayerList players={players} />
+          <PlayerList players={players} goalsByPlayer={goalsByPlayer} />
         </section>
 
         {/* Son maçlar */}

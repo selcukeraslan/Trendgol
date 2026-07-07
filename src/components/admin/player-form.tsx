@@ -3,10 +3,10 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
 import type { Player, PlayerPosition } from "@/types";
+import { playerSchema, type PlayerFormValues } from "@/schemas/player";
 import { playerPositionLabels } from "@/lib/labels";
 import { usePlayerStore, type PlayerInput } from "@/store/playerStore";
 import { Button } from "@/components/ui/button";
@@ -32,21 +32,11 @@ import {
 const selectClass =
   "flex h-9 w-full rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
 
-const playerSchema = z.object({
-  name: z.string().min(2, "Oyuncu adı gerekli."),
-  number: z.string().optional(),
-  position: z.string().optional(),
-  goals: z.string().optional(),
-});
-
-type PlayerFormValues = z.infer<typeof playerSchema>;
-
 function toDefaults(player?: Player): PlayerFormValues {
   return {
     name: player?.name ?? "",
     number: player?.number != null ? String(player.number) : "",
     position: player?.position ?? "",
-    goals: player?.goals != null ? String(player.goals) : "",
   };
 }
 
@@ -79,7 +69,6 @@ export function PlayerForm({ trigger, teamId, player }: PlayerFormProps) {
       position: values.position
         ? (values.position as PlayerPosition)
         : undefined,
-      goals: values.goals ? Number(values.goals) : 0,
     };
     if (player) {
       await edit(player.id, input);
@@ -137,40 +126,30 @@ export function PlayerForm({ trigger, teamId, player }: PlayerFormProps) {
               />
               <FormField
                 control={form.control}
-                name="goals"
+                name="position"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Gol</FormLabel>
+                    <FormLabel>Mevki</FormLabel>
                     <FormControl>
-                      <Input type="number" min={0} placeholder="0" {...field} />
+                      <select className={selectClass} {...field}>
+                        <option value="">Belirtilmemiş</option>
+                        {(
+                          Object.keys(playerPositionLabels) as PlayerPosition[]
+                        ).map((pos) => (
+                          <option key={pos} value={pos}>
+                            {playerPositionLabels[pos]}
+                          </option>
+                        ))}
+                      </select>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
                 )}
               />
             </div>
-            <FormField
-              control={form.control}
-              name="position"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Mevki</FormLabel>
-                  <FormControl>
-                    <select className={selectClass} {...field}>
-                      <option value="">Belirtilmemiş</option>
-                      {(
-                        Object.keys(playerPositionLabels) as PlayerPosition[]
-                      ).map((pos) => (
-                        <option key={pos} value={pos}>
-                          {playerPositionLabels[pos]}
-                        </option>
-                      ))}
-                    </select>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <p className="text-xs text-muted-foreground">
+              Goller maç skorlarından (golcü girişi) otomatik hesaplanır.
+            </p>
             <DialogFooter>
               <DialogClose
                 render={

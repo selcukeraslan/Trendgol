@@ -3,9 +3,9 @@
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 
+import { settingsSchema, type SettingsFormValues } from "@/schemas/settings";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,32 +20,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
-
-const settingsSchema = z.object({
-  heroTitle: z.string().min(3, "Başlık gerekli."),
-  heroSubtitle: z.string().min(3, "Alt başlık gerekli."),
-  prizePool: z.string().min(1, "Ödül havuzu gerekli."),
-  entryFee: z.string().min(1, "Katılım ücreti gerekli."),
-  perMatchFee: z.string().min(1, "Maç başı ücret gerekli."),
-  aboutText: z.string().min(10, "Hakkımızda metni gerekli."),
-  contact: z.object({
-    phone: z.string().min(1, "Telefon gerekli."),
-    email: z.string().email("Geçerli e-posta girin."),
-    address: z.string().min(1, "Adres gerekli."),
-    instagram: z.string().optional(),
-    whatsapp: z.string().optional(),
-  }),
-});
-
-type SettingsFormValues = z.infer<typeof settingsSchema>;
+import { ImageUpload } from "@/components/common/image-upload";
 
 const emptyDefaults: SettingsFormValues = {
+  logoUrl: "",
   heroTitle: "",
   heroSubtitle: "",
   prizePool: "",
   entryFee: "",
   perMatchFee: "",
   aboutText: "",
+  sponsors: "",
   contact: { phone: "", email: "", address: "", instagram: "", whatsapp: "" },
 };
 
@@ -68,6 +53,8 @@ export default function AdminSettingsPage() {
     if (settings) {
       form.reset({
         ...settings,
+        logoUrl: settings.logoUrl ?? "",
+        sponsors: (settings.sponsors ?? []).join("\n"),
         contact: {
           phone: settings.contact.phone,
           email: settings.contact.email,
@@ -80,7 +67,14 @@ export default function AdminSettingsPage() {
   }, [settings, form]);
 
   async function onSubmit(values: SettingsFormValues) {
-    await save(values);
+    const { sponsors, ...rest } = values;
+    await save({
+      ...rest,
+      sponsors: (sponsors ?? "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean),
+    });
     toast.success("Ayarlar kaydedildi.");
   }
 
@@ -101,6 +95,36 @@ export default function AdminSettingsPage() {
 
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          {/* Site logosu */}
+          <section className="space-y-4">
+            <h2 className="font-heading font-bold">Site Logosu</h2>
+            <FormField
+              control={form.control}
+              name="logoUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Logo</FormLabel>
+                  <FormControl>
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="logos"
+                      alt="Site logosu önizleme"
+                      previewClassName="h-20 w-20"
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    Navbar ve alt bilgide görünür. Boş bırakılırsa
+                    &quot;HS&quot; rozeti gösterilir. Kare/şeffaf PNG önerilir.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </section>
+
+          <Separator />
+
           {/* Ana sayfa */}
           <section className="space-y-4">
             <h2 className="font-heading font-bold">Ana Sayfa</h2>
@@ -194,6 +218,34 @@ export default function AdminSettingsPage() {
                   <FormControl>
                     <Textarea rows={5} {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </section>
+
+          <Separator />
+
+          {/* Sponsorlar */}
+          <section className="space-y-4">
+            <h2 className="font-heading font-bold">Sponsorlar</h2>
+            <FormField
+              control={form.control}
+              name="sponsors"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sponsor Listesi</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={5}
+                      placeholder={"Her satıra bir sponsor adı\nÖrn. SPOR A.Ş."}
+                      {...field}
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    Her satır bir sponsor olarak ana sayfada gösterilir. Boş
+                    bırakılırsa sponsor alanı gizlenir.
+                  </p>
                   <FormMessage />
                 </FormItem>
               )}

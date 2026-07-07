@@ -26,7 +26,12 @@ export interface Player {
   name: string;
   number?: number;
   position?: PlayerPosition;
-  goals?: number;
+}
+
+/** Bir maçta bir oyuncunun attığı gol sayısı. */
+export interface MatchScorer {
+  playerId: string;
+  goals: number;
 }
 
 export interface Match {
@@ -40,6 +45,17 @@ export interface Match {
   status: MatchStatus;
   homeScore?: number | null;
   awayScore?: number | null;
+  /** Maçta gol atan oyuncular. Gol krallığı bundan türetilir. */
+  scorers?: MatchScorer[];
+}
+
+/** Maç golcülerinden türetilir; depolanmaz. */
+export interface TopScorer {
+  playerId: string;
+  playerName: string;
+  teamId: string;
+  teamName: string;
+  goals: number;
 }
 
 /** Maç skorlarından türetilir; depolanmaz. */
@@ -80,6 +96,8 @@ export interface SiteContact {
 }
 
 export interface SiteSettings {
+  /** Site logosu görsel URL'i. Boşsa "HS" rozeti gösterilir. */
+  logoUrl?: string;
   heroTitle: string;
   heroSubtitle: string;
   /** Görüntülenecek biçimlendirilmiş değerler, ör. "50.000 ₺". */
@@ -88,4 +106,6 @@ export interface SiteSettings {
   perMatchFee: string;
   aboutText: string;
   contact: SiteContact;
+  /** Sponsor / iş ortağı adları — ana sayfada gösterilir. */
+  sponsors: string[];
 }

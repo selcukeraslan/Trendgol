@@ -8,6 +8,7 @@ import type { Match } from "@/types";
 import { formatShortDate } from "@/lib/date";
 import { useMatchStore } from "@/store/matchStore";
 import { useTeamStore } from "@/store/teamStore";
+import { usePlayerStore } from "@/store/playerStore";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/admin/data-table";
 import { DeleteConfirmDialog } from "@/components/admin/delete-confirm-dialog";
@@ -18,15 +19,18 @@ import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 export default function AdminFixturePage() {
   const loadMatches = useMatchStore((s) => s.load);
   const loadTeams = useTeamStore((s) => s.load);
+  const loadPlayers = usePlayerStore((s) => s.load);
   const matches = useMatchStore((s) => s.items);
   const loaded = useMatchStore((s) => s.loaded);
   const removeMatch = useMatchStore((s) => s.remove);
   const teams = useTeamStore((s) => s.items);
+  const players = usePlayerStore((s) => s.items);
 
   React.useEffect(() => {
     void loadMatches();
     void loadTeams();
-  }, [loadMatches, loadTeams]);
+    void loadPlayers();
+  }, [loadMatches, loadTeams, loadPlayers]);
 
   const teamMap = React.useMemo(
     () => new Map(teams.map((t) => [t.id, t])),
@@ -94,6 +98,7 @@ export default function AdminFixturePage() {
         </div>
         <MatchForm
           teams={teams}
+          players={players}
           trigger={
             <Button>
               <Plus className="size-4" aria-hidden="true" />
@@ -120,6 +125,7 @@ export default function AdminFixturePage() {
             <div className="flex items-center justify-end gap-1">
               <MatchForm
                 teams={teams}
+                players={players}
                 match={match}
                 trigger={
                   <Button variant="ghost" size="sm" aria-label="Düzenle">

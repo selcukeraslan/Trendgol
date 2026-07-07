@@ -2,10 +2,10 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { useRouter } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 
+import { loginSchema, type LoginFormValues } from "@/schemas/auth";
 import { useAuthStore } from "@/store/authStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,26 +18,25 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
-const loginSchema = z.object({
-  username: z.string().min(1, "Kullanıcı adı gerekli."),
-  password: z.string().min(1, "Şifre gerekli."),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
-
 export default function AdminLoginPage() {
   const router = useRouter();
   const login = useAuthStore((s) => s.login);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: { username: "", password: "" },
+    defaultValues: { email: "", password: "" },
   });
 
-  function onSubmit(values: LoginFormValues) {
-    // Placeholder: herhangi bir bilgi kabul edilir. İleride gerçek auth.
-    login(values.username);
-    router.replace("/admin");
+  async function onSubmit(values: LoginFormValues) {
+    try {
+      // MOCK: boş olmayan bilgi kabul edilir. Faz 4'te Supabase Auth'a bağlanır.
+      await login(values);
+      router.replace("/admin");
+    } catch {
+      form.setError("password", {
+        message: "Giriş başarısız. Bilgileri kontrol edin.",
+      });
+    }
   }
 
   return (
@@ -63,12 +62,16 @@ export default function AdminLoginPage() {
           >
             <FormField
               control={form.control}
-              name="username"
+              name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Kullanıcı Adı</FormLabel>
+                  <FormLabel>E-posta</FormLabel>
                   <FormControl>
-                    <Input placeholder="admin" {...field} />
+                    <Input
+                      type="email"
+                      placeholder="admin@trendgolig.com"
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -94,8 +97,8 @@ export default function AdminLoginPage() {
         </Form>
 
         <p className="mt-5 rounded-lg bg-muted/50 p-3 text-center text-xs text-muted-foreground">
-          Demo modu: Herhangi bir kullanıcı adı ve şifre ile giriş
-          yapabilirsiniz.
+          Demo modu: Geçerli bir e-posta ve herhangi bir şifre ile giriş
+          yapabilirsiniz. Gerçek kimlik doğrulama yakında (Supabase).
         </p>
       </div>
     </div>

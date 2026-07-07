@@ -2,12 +2,13 @@
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 import { AtSign, Mail, MapPin, MessageCircle, Phone } from "lucide-react";
 
 import type { SiteSettings } from "@/types";
+import { contactSchema, type ContactFormValues } from "@/schemas/contact";
 import { getSiteSettings } from "@/lib/repository/settingsRepository";
+import { sendContactMessage } from "@/lib/repository/contactRepository";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { PageHeader } from "@/components/common/page-header";
@@ -22,16 +23,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
-const contactSchema = z.object({
-  name: z.string().min(2, "Lütfen adınızı girin."),
-  email: z.string().email("Geçerli bir e-posta adresi girin."),
-  phone: z.string().optional(),
-  teamName: z.string().optional(),
-  message: z.string().min(10, "Mesajınız en az 10 karakter olmalı."),
-});
-
-type ContactFormValues = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
   const { data } = useAsyncData<SiteSettings>(() => getSiteSettings(), []);
@@ -48,9 +39,14 @@ export default function ContactPage() {
     },
   });
 
-  function onSubmit() {
-    toast.success("Mesajınız alındı! En kısa sürede size dönüş yapacağız.");
-    form.reset();
+  async function onSubmit(values: ContactFormValues) {
+    try {
+      await sendContactMessage(values);
+      toast.success("Mesajınız alındı! En kısa sürede size dönüş yapacağız.");
+      form.reset();
+    } catch {
+      toast.error("Mesaj gönderilemedi. Lütfen tekrar deneyin.");
+    }
   }
 
   const contactItems = [
@@ -212,8 +208,13 @@ export default function ContactPage() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" size="lg" className="w-full sm:w-auto">
-                Gönder
+              <Button
+                type="submit"
+                size="lg"
+                className="w-full sm:w-auto"
+                disabled={form.formState.isSubmitting}
+              >
+                {form.formState.isSubmitting ? "Gönderiliyor..." : "Gönder"}
               </Button>
             </form>
           </Form>

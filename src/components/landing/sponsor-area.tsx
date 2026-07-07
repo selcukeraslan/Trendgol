@@ -1,15 +1,9 @@
 import { Section } from "@/components/common/section";
 
-const sponsors = [
-  "SPOR A.Ş.",
-  "HALI SAHA+",
-  "GOLCÜ",
-  "FUTBOL360",
-  "SAHA MARKET",
-  "TEKNİK SPOR",
-];
+/** Sponsor alanı. Liste site ayarlarından (SiteSettings.sponsors) gelir. */
+export function SponsorArea({ sponsors = [] }: { sponsors?: string[] }) {
+  if (sponsors.length === 0) return null;
 
-export function SponsorArea() {
   return (
     <Section>
       <div className="text-center">

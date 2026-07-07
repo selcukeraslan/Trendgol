@@ -5,16 +5,17 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
 import { ArrowLeft } from "lucide-react";
 
 import type { BlogPost } from "@/types";
+import { blogSchema, type BlogFormValues } from "@/schemas/blog";
 import { useBlogStore, type BlogInput } from "@/store/blogStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { ImagePreview } from "@/components/common/image-preview";
 import {
   Form,
   FormControl,
@@ -24,6 +25,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
+import { BlogContent } from "@/components/blog/blog-content";
+import { cn } from "@/lib/utils";
 
 function slugify(value: string): string {
   return value
@@ -37,20 +40,6 @@ function slugify(value: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
-
-const blogSchema = z.object({
-  title: z.string().min(3, "Başlık gerekli."),
-  slug: z.string().min(3, "Slug gerekli."),
-  excerpt: z.string().min(10, "Özet en az 10 karakter."),
-  content: z.string().min(20, "İçerik en az 20 karakter."),
-  category: z.string().min(2, "Kategori gerekli."),
-  author: z.string().min(2, "Yazar gerekli."),
-  coverImageUrl: z.string().optional(),
-  featured: z.boolean(),
-  published: z.boolean(),
-});
-
-type BlogFormValues = z.infer<typeof blogSchema>;
 
 function toDefaults(post?: BlogPost): BlogFormValues {
   return {
@@ -83,6 +72,9 @@ export default function AdminBlogEditorPage() {
   }, [load]);
 
   const post = isNew ? undefined : posts.find((p) => p.id === id);
+
+  // İçerik alanı için yaz/önizle modu.
+  const [contentPreview, setContentPreview] = React.useState(false);
 
   const form = useForm<BlogFormValues>({
     resolver: zodResolver(blogSchema),
@@ -220,6 +212,11 @@ export default function AdminBlogEditorPage() {
                 <FormControl>
                   <Input placeholder="https://..." {...field} />
                 </FormControl>
+                <ImagePreview
+                  url={field.value}
+                  alt="Kapak görseli önizleme"
+                  className="h-40"
+                />
                 <FormMessage />
               </FormItem>
             )}
@@ -244,14 +241,56 @@ export default function AdminBlogEditorPage() {
             name="content"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>İçerik</FormLabel>
-                <FormControl>
-                  <Textarea
-                    rows={10}
-                    placeholder="Yazı içeriği... (paragrafları yeni satırla ayırın)"
-                    {...field}
-                  />
-                </FormControl>
+                <div className="flex items-center justify-between">
+                  <FormLabel className="mb-0">İçerik</FormLabel>
+                  <div className="flex rounded-md border border-border p-0.5 text-xs">
+                    <button
+                      type="button"
+                      aria-pressed={!contentPreview}
+                      onClick={() => setContentPreview(false)}
+                      className={cn(
+                        "rounded px-2.5 py-1 font-medium transition-colors",
+                        !contentPreview
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      Yaz
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={contentPreview}
+                      onClick={() => setContentPreview(true)}
+                      className={cn(
+                        "rounded px-2.5 py-1 font-medium transition-colors",
+                        contentPreview
+                          ? "bg-muted text-foreground"
+                          : "text-muted-foreground hover:text-foreground",
+                      )}
+                    >
+                      Önizle
+                    </button>
+                  </div>
+                </div>
+                {contentPreview ? (
+                  <div className="min-h-[16rem] rounded-lg border border-border bg-card p-4">
+                    {field.value?.trim() ? (
+                      <BlogContent content={field.value} />
+                    ) : (
+                      <p className="text-sm text-muted-foreground">
+                        Önizlenecek içerik yok.
+                      </p>
+                    )}
+                  </div>
+                ) : (
+                  <FormControl>
+                    <Textarea
+                      rows={10}
+                      placeholder="Yazı içeriği... (paragrafları yeni satırla ayırın)"
+                      {...field}
+                    />
+                  </FormControl>
+                )}
                 <FormMessage />
               </FormItem>
             )}

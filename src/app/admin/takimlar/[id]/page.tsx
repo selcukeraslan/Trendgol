@@ -8,8 +8,10 @@ import { ArrowLeft, Pencil, Plus, Trash2 } from "lucide-react";
 
 import type { Player } from "@/types";
 import { playerPositionLabels } from "@/lib/labels";
+import { buildPlayerGoals } from "@/lib/scorers";
 import { useTeamStore } from "@/store/teamStore";
 import { usePlayerStore } from "@/store/playerStore";
+import { useMatchStore } from "@/store/matchStore";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/admin/data-table";
 import { DeleteConfirmDialog } from "@/components/admin/delete-confirm-dialog";
@@ -22,20 +24,27 @@ export default function AdminPlayersPage() {
 
   const loadTeams = useTeamStore((s) => s.load);
   const loadPlayers = usePlayerStore((s) => s.load);
+  const loadMatches = useMatchStore((s) => s.load);
   const teams = useTeamStore((s) => s.items);
   const players = usePlayerStore((s) => s.items);
+  const matches = useMatchStore((s) => s.items);
   const loaded = usePlayerStore((s) => s.loaded);
   const removePlayer = usePlayerStore((s) => s.remove);
 
   React.useEffect(() => {
     void loadTeams();
     void loadPlayers();
-  }, [loadTeams, loadPlayers]);
+    void loadMatches();
+  }, [loadTeams, loadPlayers, loadMatches]);
 
   const team = teams.find((t) => t.id === teamId);
   const teamPlayers = players
     .filter((p) => p.teamId === teamId)
     .sort((a, b) => (a.number ?? 999) - (b.number ?? 999));
+  const goalsByPlayer = React.useMemo(
+    () => buildPlayerGoals(matches),
+    [matches],
+  );
 
   async function handleDelete(player: Player) {
     await removePlayer(player.id);
@@ -53,7 +62,11 @@ export default function AdminPlayersPage() {
       header: "Mevki",
       cell: (p) => (p.position ? playerPositionLabels[p.position] : "-"),
     },
-    { header: "Gol", className: "text-center", cell: (p) => p.goals ?? 0 },
+    {
+      header: "Gol",
+      className: "text-center",
+      cell: (p) => goalsByPlayer.get(p.id) ?? 0,
+    },
   ];
 
   return (

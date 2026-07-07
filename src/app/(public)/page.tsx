@@ -8,6 +8,9 @@ import { getTeams } from "@/lib/repository/teamRepository";
 import { getMatches } from "@/lib/repository/matchRepository";
 import { calculateStandings } from "@/lib/standings";
 import { useAsyncData } from "@/hooks/use-async-data";
+import { Container } from "@/components/common/container";
+import { ErrorState } from "@/components/common/error-state";
+import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 import { Hero } from "@/components/landing/hero";
 import { ParticipationTerms } from "@/components/landing/participation-terms";
 import { HowToJoin } from "@/components/landing/how-to-join";
@@ -23,7 +26,7 @@ interface LandingData {
 }
 
 export default function Home() {
-  const { data } = useAsyncData<LandingData>(async () => {
+  const { data, loading, error } = useAsyncData<LandingData>(async () => {
     const [settings, teams, matches] = await Promise.all([
       getSiteSettings(),
       getTeams(),
@@ -43,12 +46,24 @@ export default function Home() {
   return (
     <>
       <Hero settings={settings} />
-      <ParticipationTerms settings={settings} />
-      <UpcomingMatches matches={matches} teams={teams} />
-      <StandingsSummary standings={standings} teams={teams} />
-      <HowToJoin />
-      <SponsorArea />
-      <CtaSection />
+      {error ? (
+        <Container className="py-12">
+          <ErrorState message={error} />
+        </Container>
+      ) : loading ? (
+        <Container className="py-12">
+          <LoadingSkeleton variant="card" count={3} />
+        </Container>
+      ) : (
+        <>
+          <ParticipationTerms settings={settings} />
+          <UpcomingMatches matches={matches} teams={teams} />
+          <StandingsSummary standings={standings} teams={teams} />
+          <HowToJoin />
+          <SponsorArea sponsors={settings?.sponsors} />
+          <CtaSection />
+        </>
+      )}
     </>
   );
 }

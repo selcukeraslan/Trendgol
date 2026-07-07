@@ -1,12 +1,13 @@
 "use client";
 
 import * as React from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { useForm, useWatch, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { toast } from "sonner";
+import { Plus, Trash2 } from "lucide-react";
 
-import type { Match, MatchStatus, Team } from "@/types";
+import type { Match, MatchStatus, Player, Team } from "@/types";
+import { matchSchema, type MatchFormValues } from "@/schemas/match";
 import { matchStatusLabels } from "@/lib/labels";
 import { useMatchStore, type MatchInput } from "@/store/matchStore";
 import { Button } from "@/components/ui/button";
@@ -32,29 +33,6 @@ import {
 const selectClass =
   "flex h-9 w-full rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
 
-const matchSchema = z
-  .object({
-    week: z.string().min(1, "Hafta gerekli."),
-    homeTeamId: z.string().min(1, "Ev sahibi seçin."),
-    awayTeamId: z.string().min(1, "Deplasman seçin."),
-    date: z.string().min(1, "Tarih gerekli."),
-    time: z.string().min(1, "Saat gerekli."),
-    venue: z.string().min(1, "Saha gerekli."),
-    status: z.enum(["scheduled", "played", "postponed"]),
-    homeScore: z.string().optional(),
-    awayScore: z.string().optional(),
-  })
-  .refine((d) => d.homeTeamId !== d.awayTeamId, {
-    message: "Ev sahibi ve deplasman farklı olmalı.",
-    path: ["awayTeamId"],
-  })
-  .refine(
-    (d) => d.status !== "played" || (!!d.homeScore && !!d.awayScore),
-    { message: "Oynanan maç için skor girin.", path: ["homeScore"] },
-  );
-
-type MatchFormValues = z.infer<typeof matchSchema>;
-
 function toDefaults(match?: Match): MatchFormValues {
   return {
     week: match ? String(match.week) : "1",
@@ -66,16 +44,22 @@ function toDefaults(match?: Match): MatchFormValues {
     status: match?.status ?? "scheduled",
     homeScore: match?.homeScore != null ? String(match.homeScore) : "",
     awayScore: match?.awayScore != null ? String(match.awayScore) : "",
+    scorers:
+      match?.scorers?.map((s) => ({
+        playerId: s.playerId,
+        goals: String(s.goals),
+      })) ?? [],
   };
 }
 
 interface MatchFormProps {
   trigger: React.ReactElement;
   teams: Team[];
+  players: Player[];
   match?: Match;
 }
 
-export function MatchForm({ trigger, teams, match }: MatchFormProps) {
+export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
   const [open, setOpen] = React.useState(false);
   const add = useMatchStore((s) => s.add);
   const edit = useMatchStore((s) => s.edit);
@@ -86,6 +70,22 @@ export function MatchForm({ trigger, teams, match }: MatchFormProps) {
   });
 
   const status = useWatch({ control: form.control, name: "status" });
+  const homeTeamId = useWatch({ control: form.control, name: "homeTeamId" });
+  const awayTeamId = useWatch({ control: form.control, name: "awayTeamId" });
+
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "scorers",
+  });
+
+  // Golcü seçiminde yalnızca maçtaki iki takımın oyuncuları gösterilir.
+  const matchPlayers = React.useMemo(
+    () =>
+      players.filter(
+        (p) => p.teamId === homeTeamId || p.teamId === awayTeamId,
+      ),
+    [players, homeTeamId, awayTeamId],
+  );
 
   function handleOpenChange(next: boolean) {
     setOpen(next);
@@ -93,6 +93,13 @@ export function MatchForm({ trigger, teams, match }: MatchFormProps) {
   }
 
   async function onSubmit(values: MatchFormValues) {
+    const isPlayed = values.status === "played";
+    const scorers = isPlayed
+      ? (values.scorers ?? [])
+          .filter((s) => s.playerId && Number(s.goals) > 0)
+          .map((s) => ({ playerId: s.playerId, goals: Number(s.goals) }))
+      : [];
+
     const input: MatchInput = {
       week: Number(values.week),
       homeTeamId: values.homeTeamId,
@@ -101,8 +108,9 @@ export function MatchForm({ trigger, teams, match }: MatchFormProps) {
       time: values.time,
       venue: values.venue,
       status: values.status as MatchStatus,
-      homeScore: values.status === "played" ? Number(values.homeScore) : null,
-      awayScore: values.status === "played" ? Number(values.awayScore) : null,
+      homeScore: isPlayed ? Number(values.homeScore) : null,
+      awayScore: isPlayed ? Number(values.awayScore) : null,
+      scorers,
     };
     if (match) {
       await edit(match.id, input);
@@ -245,34 +253,124 @@ export function MatchForm({ trigger, teams, match }: MatchFormProps) {
             />
 
             {status === "played" ? (
-              <div className="grid grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="homeScore"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Ev Sahibi Skor</FormLabel>
-                      <FormControl>
-                        <Input type="number" min={0} placeholder="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
+              <>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="homeScore"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Ev Sahibi Skor</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            placeholder="0"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="awayScore"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Deplasman Skor</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="number"
+                            min={0}
+                            placeholder="0"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                {/* Golcüler — gol krallığı bu kayıtlardan türetilir */}
+                <div className="space-y-2 rounded-lg border border-border p-3">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="mb-0">Golcüler</FormLabel>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={!homeTeamId || !awayTeamId}
+                      onClick={() => append({ playerId: "", goals: "1" })}
+                    >
+                      <Plus className="size-4" aria-hidden="true" />
+                      Golcü Ekle
+                    </Button>
+                  </div>
+
+                  {fields.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      {homeTeamId && awayTeamId
+                        ? "Henüz golcü eklenmedi."
+                        : "Önce ev sahibi ve deplasman takımlarını seçin."}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {fields.map((row, index) => (
+                        <div key={row.id} className="flex items-start gap-2">
+                          <FormField
+                            control={form.control}
+                            name={`scorers.${index}.playerId`}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormControl>
+                                  <select className={selectClass} {...field}>
+                                    <option value="">Oyuncu seçin</option>
+                                    {matchPlayers.map((player) => (
+                                      <option key={player.id} value={player.id}>
+                                        {player.name}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name={`scorers.${index}.goals`}
+                            render={({ field }) => (
+                              <FormItem className="w-20">
+                                <FormControl>
+                                  <Input
+                                    type="number"
+                                    min={1}
+                                    aria-label="Gol sayısı"
+                                    {...field}
+                                  />
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive"
+                            aria-label="Golcüyü kaldır"
+                            onClick={() => remove(index)}
+                          >
+                            <Trash2 className="size-4" aria-hidden="true" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
                   )}
-                />
-                <FormField
-                  control={form.control}
-                  name="awayScore"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Deplasman Skor</FormLabel>
-                      <FormControl>
-                        <Input type="number" min={0} placeholder="0" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
+                </div>
+              </>
             ) : null}
 
             <DialogFooter>

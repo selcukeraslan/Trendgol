@@ -26,6 +26,7 @@ export const publicNavItems: NavItem[] = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Fikstür", href: "/fikstur" },
   { label: "Puan Durumu", href: "/puan-durumu" },
+  { label: "Gol Krallığı", href: "/gol-krali" },
   { label: "Takımlar", href: "/takimlar" },
   { label: "Blog", href: "/blog" },
   { label: "Biz Kimiz", href: "/biz-kimiz" },
@@ -42,4 +43,4 @@ export const adminNavItems: AdminNavItem[] = [
 ];
 
 /** Site adı — header/footer'da kullanılır. */
-export const siteName = "Halı Saha Ligi";
+export const siteName = "TrendgoLig";
