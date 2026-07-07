@@ -11,7 +11,7 @@ import { useTeamStore } from "@/store/teamStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ImagePreview } from "@/components/common/image-preview";
+import { ImageUpload } from "@/components/common/image-upload";
 import {
   Dialog,
   DialogClose,
@@ -153,15 +153,16 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
               name="logoUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Logo URL (opsiyonel)</FormLabel>
+                  <FormLabel>Logo (opsiyonel)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://..." {...field} />
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="teams"
+                      alt="Logo önizleme"
+                      previewClassName="h-24 w-24"
+                    />
                   </FormControl>
-                  <ImagePreview
-                    url={field.value}
-                    alt="Logo önizleme"
-                    className="h-24 w-24"
-                  />
                   <FormMessage />
                 </FormItem>
               )}
@@ -171,15 +172,16 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
               name="photoUrl"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Takım Fotoğrafı URL (opsiyonel)</FormLabel>
+                  <FormLabel>Takım Fotoğrafı (opsiyonel)</FormLabel>
                   <FormControl>
-                    <Input placeholder="https://..." {...field} />
+                    <ImageUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="teams"
+                      alt="Takım fotoğrafı önizleme"
+                      previewClassName="h-32"
+                    />
                   </FormControl>
-                  <ImagePreview
-                    url={field.value}
-                    alt="Takım fotoğrafı önizleme"
-                    className="h-32"
-                  />
                   <FormMessage />
                 </FormItem>
               )}

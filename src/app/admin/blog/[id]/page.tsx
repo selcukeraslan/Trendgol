@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { ImagePreview } from "@/components/common/image-preview";
+import { ImageUpload } from "@/components/common/image-upload";
 import {
   Form,
   FormControl,
@@ -208,15 +208,16 @@ export default function AdminBlogEditorPage() {
             name="coverImageUrl"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Kapak Görseli URL (opsiyonel)</FormLabel>
+                <FormLabel>Kapak Görseli (opsiyonel)</FormLabel>
                 <FormControl>
-                  <Input placeholder="https://..." {...field} />
+                  <ImageUpload
+                    value={field.value}
+                    onChange={field.onChange}
+                    folder="blog"
+                    alt="Kapak görseli önizleme"
+                    previewClassName="h-40"
+                  />
                 </FormControl>
-                <ImagePreview
-                  url={field.value}
-                  alt="Kapak görseli önizleme"
-                  className="h-40"
-                />
                 <FormMessage />
               </FormItem>
             )}
