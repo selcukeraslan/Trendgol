@@ -100,10 +100,6 @@ export interface SiteSettings {
   logoUrl?: string;
   heroTitle: string;
   heroSubtitle: string;
-  /** Görüntülenecek biçimlendirilmiş değerler, ör. "50.000 ₺". */
-  prizePool: string;
-  entryFee: string;
-  perMatchFee: string;
   aboutText: string;
   contact: SiteContact;
   /** Sponsor / iş ortağı adları — ana sayfada gösterilir. */

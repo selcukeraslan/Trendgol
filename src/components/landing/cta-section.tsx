@@ -18,7 +18,7 @@ export function CtaSection() {
             Şampiyonluk yolundaki yerini al
           </h2>
           <p className="relative mx-auto mt-3 max-w-lg text-muted-foreground">
-            Kontenjanlar dolmadan takımını kaydet, ödüllü ligin bir parçası ol.
+            Kontenjanlar dolmadan takımını kaydet, ligin bir parçası ol.
           </p>
           <div className="relative mt-8 flex flex-wrap items-center justify-center gap-3">
             <Link

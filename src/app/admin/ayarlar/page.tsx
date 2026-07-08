@@ -26,9 +26,6 @@ const emptyDefaults: SettingsFormValues = {
   logoUrl: "",
   heroTitle: "",
   heroSubtitle: "",
-  prizePool: "",
-  entryFee: "",
-  perMatchFee: "",
   aboutText: "",
   sponsors: "",
   contact: { phone: "", email: "", address: "", instagram: "", whatsapp: "" },
@@ -154,54 +151,6 @@ export default function AdminSettingsPage() {
                 </FormItem>
               )}
             />
-          </section>
-
-          <Separator />
-
-          {/* Ücretler */}
-          <section className="space-y-4">
-            <h2 className="font-heading font-bold">Ücretler & Ödül</h2>
-            <div className="grid gap-4 sm:grid-cols-3">
-              <FormField
-                control={form.control}
-                name="prizePool"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ödül Havuzu</FormLabel>
-                    <FormControl>
-                      <Input placeholder="50.000 ₺" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="entryFee"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Katılım Ücreti</FormLabel>
-                    <FormControl>
-                      <Input placeholder="2.500 ₺" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="perMatchFee"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Maç Başı Ücret</FormLabel>
-                    <FormControl>
-                      <Input placeholder="150 ₺" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
           </section>
 
           <Separator />

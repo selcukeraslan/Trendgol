@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { SiteSettings } from "@/types";
@@ -10,7 +10,7 @@ export function Hero({ settings }: { settings?: SiteSettings }) {
   const title = settings?.heroTitle ?? "Sahanın Şampiyonu Sen Ol";
   const subtitle =
     settings?.heroSubtitle ??
-    "Ücretli katılımlı, para ödüllü halı saha ligi. Takımını kur, sahaya çık, ödülü kap.";
+    "Takımını kur, sahaya çık, ligin zirvesine oyna.";
 
   return (
     <section className="relative overflow-hidden border-b border-border/60">
@@ -25,14 +25,7 @@ export function Hero({ settings }: { settings?: SiteSettings }) {
       />
 
       <Container className="relative py-20 text-center sm:py-28">
-        {settings?.prizePool ? (
-          <span className="inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-medium text-gold">
-            <Trophy className="size-4" aria-hidden="true" />
-            {settings.prizePool} ödül havuzu
-          </span>
-        ) : null}
-
-        <h1 className="mx-auto mt-6 max-w-3xl font-heading text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
+        <h1 className="mx-auto max-w-3xl font-heading text-4xl font-bold tracking-tight text-balance sm:text-5xl lg:text-6xl">
           {title}
         </h1>
         <p className="mx-auto mt-5 max-w-xl text-pretty text-lg text-muted-foreground">

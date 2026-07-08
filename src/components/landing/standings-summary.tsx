@@ -21,7 +21,7 @@ export function StandingsSummary({ standings, teams }: StandingsSummaryProps) {
             Puan Durumu
           </h2>
           <p className="mt-1 text-muted-foreground">
-            Zirvedeki takımlar. İlk 3 ödül bölgesinde.
+            Zirvedeki takımlar. İlk 3 sıra öne çıkar.
           </p>
         </div>
         <Link
