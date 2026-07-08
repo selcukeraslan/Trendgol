@@ -23,15 +23,15 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   metadataBase: new URL("https://trendgolig.com"),
   title: {
-    default: "TrendgoLig — Para Ödüllü Futbol Ligi",
+    default: "TrendgoLig — Amatör Futbol Ligi",
     template: "%s | TrendgoLig",
   },
   description:
-    "Ücretli katılımlı, para ödüllü halı saha futbol ligi. Fikstür, puan durumu, takımlar, blog ve daha fazlası.",
+    "Amatör halı saha futbol ligi. Fikstür, puan durumu, takımlar, gol krallığı, blog ve daha fazlası.",
   keywords: [
     "halı saha ligi",
     "futbol ligi",
-    "para ödüllü lig",
+    "amatör lig",
     "halı saha turnuvası",
     "fikstür",
     "puan durumu",
@@ -40,9 +40,9 @@ export const metadata: Metadata = {
     type: "website",
     locale: "tr_TR",
     siteName: "TrendgoLig",
-    title: "TrendgoLig — Para Ödüllü Futbol Ligi",
+    title: "TrendgoLig — Amatör Futbol Ligi",
     description:
-      "Ücretli katılımlı, para ödüllü halı saha futbol ligi. Takımını kur, sahaya çık, ödülü kap.",
+      "Amatör halı saha futbol ligi. Takımını kur, sahaya çık, ligin zirvesine oyna.",
   },
   robots: { index: true, follow: true },
 };

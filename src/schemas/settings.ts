@@ -5,9 +5,6 @@ export const settingsSchema = z.object({
   logoUrl: z.string().optional(),
   heroTitle: z.string().min(3, "Başlık gerekli."),
   heroSubtitle: z.string().min(3, "Alt başlık gerekli."),
-  prizePool: z.string().min(1, "Ödül havuzu gerekli."),
-  entryFee: z.string().min(1, "Katılım ücreti gerekli."),
-  perMatchFee: z.string().min(1, "Maç başı ücret gerekli."),
   aboutText: z.string().min(10, "Hakkımızda metni gerekli."),
   // Formda her satır bir sponsor; kayıtta string[]'e dönüştürülür.
   sponsors: z.string().optional(),

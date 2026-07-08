@@ -38,8 +38,8 @@ export function Footer() {
               </span>
             </div>
             <p className="max-w-xs text-sm text-muted-foreground">
-              Ücretli katılımlı, para ödüllü halı saha futbol ligi. Takımını kur,
-              sahaya çık, ödülü kap.
+              Amatör halı saha futbol ligi. Takımını kur, sahaya çık, ligin
+              zirvesine oyna.
             </p>
           </div>
 

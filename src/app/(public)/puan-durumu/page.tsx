@@ -38,7 +38,7 @@ export default function StandingsPage() {
       <PageHeader
         eyebrow="Sezon 2026"
         title="Puan Durumu"
-        description="Puanlar oynanan maç skorlarından otomatik hesaplanır. İlk 3 takım ödül bölgesindedir."
+        description="Puanlar oynanan maç skorlarından otomatik hesaplanır. İlk 3 sıra öne çıkar."
       />
       <Container className="py-10">
         {loading ? (

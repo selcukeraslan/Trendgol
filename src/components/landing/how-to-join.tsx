@@ -1,4 +1,4 @@
-import { ClipboardList, CreditCard, Flag, Users } from "lucide-react";
+import { CalendarCheck, ClipboardList, Flag, Users } from "lucide-react";
 
 import { Section } from "@/components/common/section";
 
@@ -14,14 +14,14 @@ const steps = [
     text: "Kadronu tamamla, kaptanını belirle ve hazır ol.",
   },
   {
-    icon: CreditCard,
-    title: "Katılımı Tamamla",
-    text: "Katılım ücretini öde, fikstürdeki yerini al.",
+    icon: CalendarCheck,
+    title: "Fikstüre Gir",
+    text: "Onay sonrası fikstürdeki yerini al, maç gününü bekle.",
   },
   {
     icon: Flag,
     title: "Sahaya Çık",
-    text: "Maçlarını oyna, puanları topla, ödüle koş.",
+    text: "Maçlarını oyna, puanları topla, zirveye oyna.",
   },
 ];
 

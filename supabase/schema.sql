@@ -57,9 +57,6 @@ create table if not exists public.site_settings (
   id            text primary key default 'default',
   hero_title    text not null,
   hero_subtitle text not null,
-  prize_pool    text not null,
-  entry_fee     text not null,
-  per_match_fee text not null,
   about_text    text not null,
   contact       jsonb not null default '{}'::jsonb,
   sponsors      jsonb not null default '[]'::jsonb

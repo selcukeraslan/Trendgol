@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Award, Scale, ShieldCheck, Target, Trophy, Users } from "lucide-react";
+import { Award, Scale, ShieldCheck, Target, Users } from "lucide-react";
 
 import type { SiteSettings, Team } from "@/types";
 import { getSiteSettings } from "@/lib/repository/settingsRepository";
@@ -25,8 +25,8 @@ const values = [
   },
   {
     icon: ShieldCheck,
-    title: "Güvenilir Ödeme",
-    text: "Katılım ve ödül süreçleri net, izlenebilir ve güvence altında.",
+    title: "Şeffaf İşleyiş",
+    text: "Kurallar, fikstür ve puanlama herkes için açık ve izlenebilir.",
   },
   {
     icon: Target,
@@ -46,11 +46,6 @@ export default function AboutPage() {
 
   const stats = [
     { icon: Users, label: "Takım", value: teamCount > 0 ? `${teamCount}` : "—" },
-    {
-      icon: Trophy,
-      label: "Ödül Havuzu",
-      value: settings?.prizePool ?? "—",
-    },
     { icon: Award, label: "Sezon", value: "2026" },
   ];
 
@@ -71,10 +66,10 @@ export default function AboutPage() {
             </h2>
             <p className="text-pretty leading-relaxed text-muted-foreground">
               {settings?.aboutText ??
-                "Halı saha ligimiz; dostluğu, rekabeti ve futbol tutkusunu bir araya getiren ücretli katılımlı, para ödüllü bir organizasyondur."}
+                "Halı saha ligimiz; dostluğu, rekabeti ve futbol tutkusunu bir araya getiren bir organizasyondur."}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 gap-3">
             {stats.map((stat) => (
               <div
                 key={stat.label}
@@ -103,8 +98,8 @@ export default function AboutPage() {
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-pretty text-muted-foreground">
             Her seviyeden futbolseveri, adil ve güvenilir bir ortamda
-            buluşturmak; kazananı sahada belli olan, ödülü hak edenin aldığı bir
-            lig deneyimi sunmak.
+            buluşturmak; kazananı sahada belli olan, adil ve keyifli bir lig
+            deneyimi sunmak.
           </p>
         </section>
 
@@ -140,7 +135,7 @@ export default function AboutPage() {
             Sen de aramıza katıl
           </h2>
           <p className="max-w-md text-muted-foreground">
-            Takımını kaydet, sahaya çık ve ödül havuzundan payını al.
+            Takımını kaydet, sahaya çık ve ligin bir parçası ol.
           </p>
           <Link href="/iletisim" className={cn(buttonVariants({ size: "lg" }))}>
             Takımını Kaydet

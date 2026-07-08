@@ -9,9 +9,6 @@ interface SettingsRow {
   logo_url: string | null;
   hero_title: string;
   hero_subtitle: string;
-  prize_pool: string;
-  entry_fee: string;
-  per_match_fee: string;
   about_text: string;
   contact: SiteContact;
   sponsors: string[] | null;
@@ -22,9 +19,6 @@ function fromRow(r: SettingsRow): SiteSettings {
     logoUrl: r.logo_url ?? undefined,
     heroTitle: r.hero_title,
     heroSubtitle: r.hero_subtitle,
-    prizePool: r.prize_pool,
-    entryFee: r.entry_fee,
-    perMatchFee: r.per_match_fee,
     aboutText: r.about_text,
     contact: r.contact,
     sponsors: r.sponsors ?? [],
@@ -55,9 +49,6 @@ export async function updateSiteSettings(
   if (input.heroTitle !== undefined) patch.hero_title = input.heroTitle;
   if (input.heroSubtitle !== undefined)
     patch.hero_subtitle = input.heroSubtitle;
-  if (input.prizePool !== undefined) patch.prize_pool = input.prizePool;
-  if (input.entryFee !== undefined) patch.entry_fee = input.entryFee;
-  if (input.perMatchFee !== undefined) patch.per_match_fee = input.perMatchFee;
   if (input.aboutText !== undefined) patch.about_text = input.aboutText;
   if (input.contact !== undefined) patch.contact = input.contact;
   if (input.sponsors !== undefined) patch.sponsors = input.sponsors;

@@ -1,10 +1,7 @@
 {
   "heroTitle": "Sahanın Şampiyonu Sen Ol",
-  "heroSubtitle": "Ücretli katılımlı, para ödüllü halı saha ligi. Takımını kur, sahaya çık, ödülü kap.",
-  "prizePool": "50.000 ₺",
-  "entryFee": "2.500 ₺",
-  "perMatchFee": "150 ₺",
-  "aboutText": "TrendgoLig; amatör futbolu profesyonel bir organizasyon anlayışıyla buluşturan, ücretli katılımlı ve para ödüllü bir liglerdir. Adil fikstür, şeffaf puanlama ve güvenilir ödeme sistemiyle her hafta sahada heyecanı yaşatıyoruz. Amacımız; dostluğu, rekabeti ve futbol tutkusunu en üst seviyede bir araya getirmek.",
+  "heroSubtitle": "Takımını kur, sahaya çık, ligin zirvesine oyna.",
+  "aboutText": "TrendgoLig; amatör futbolu profesyonel bir organizasyon anlayışıyla buluşturan bir ligtir. Adil fikstür ve şeffaf puanlama ile her hafta sahada heyecanı yaşatıyoruz. Amacımız; dostluğu, rekabeti ve futbol tutkusunu en üst seviyede bir araya getirmek.",
   "contact": {
     "phone": "+90 555 123 45 67",
     "email": "iletisim@halisahaligi.com",

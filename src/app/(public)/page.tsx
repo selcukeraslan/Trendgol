@@ -12,7 +12,6 @@ import { Container } from "@/components/common/container";
 import { ErrorState } from "@/components/common/error-state";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 import { Hero } from "@/components/landing/hero";
-import { ParticipationTerms } from "@/components/landing/participation-terms";
 import { HowToJoin } from "@/components/landing/how-to-join";
 import { UpcomingMatches } from "@/components/landing/upcoming-matches";
 import { StandingsSummary } from "@/components/landing/standings-summary";
@@ -56,7 +55,6 @@ export default function Home() {
         </Container>
       ) : (
         <>
-          <ParticipationTerms settings={settings} />
           <UpcomingMatches matches={matches} teams={teams} />
           <StandingsSummary standings={standings} teams={teams} />
           <HowToJoin />
