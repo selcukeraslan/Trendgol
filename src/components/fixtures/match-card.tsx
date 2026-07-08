@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { CalendarDays, Clock, MapPin } from "lucide-react";
 
 import { cn } from "@/lib/utils";
@@ -47,9 +48,10 @@ export function MatchCard({
   className,
 }: MatchCardProps) {
   return (
-    <div
+    <Link
+      href={`/mac/${match.id}`}
       className={cn(
-        "rounded-xl border border-border bg-card p-4 transition-colors hover:border-brand/40 sm:p-5",
+        "block rounded-xl border border-border bg-card p-4 transition-colors hover:border-brand/40 focus-visible:border-brand/40 focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none sm:p-5",
         className,
       )}
     >
@@ -97,6 +99,6 @@ export function MatchCard({
           {match.venue}
         </span>
       </div>
-    </div>
+    </Link>
   );
 }
