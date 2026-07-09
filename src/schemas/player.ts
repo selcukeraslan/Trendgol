@@ -3,7 +3,7 @@ import { z } from "zod";
 
 // Not: Goller maç golcü kayıtlarından türetilir, oyuncuda tutulmaz.
 export const playerSchema = z.object({
-  name: z.string().min(2, "Oyuncu adı gerekli."),
+  name: z.string().min(1, "Oyuncu adı gerekli."),
   number: z.string().optional(),
   position: z.string().optional(),
 });

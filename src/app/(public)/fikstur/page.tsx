@@ -7,6 +7,7 @@ import type { Match, Player, Team } from "@/types";
 import { getMatches } from "@/lib/repository/matchRepository";
 import { getTeams } from "@/lib/repository/teamRepository";
 import { getPlayers } from "@/lib/repository/playerRepository";
+import { groupMatches, hasGroups } from "@/lib/groups";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { PageHeader } from "@/components/common/page-header";
@@ -15,6 +16,36 @@ import { ErrorState } from "@/components/common/error-state";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 import { MatchCard } from "@/components/fixtures/match-card";
 import { WeekSelector } from "@/components/fixtures/week-selector";
+
+/** Maç kartlarını ızgara halinde gösterir. */
+function MatchGrid({
+  matches,
+  teamMap,
+  players,
+}: {
+  matches: Match[];
+  teamMap: Map<string, Team>;
+  players: Player[];
+}) {
+  return (
+    <div className="grid gap-4 sm:grid-cols-2">
+      {matches.map((match) => {
+        const homeTeam = teamMap.get(match.homeTeamId);
+        const awayTeam = teamMap.get(match.awayTeamId);
+        if (!homeTeam || !awayTeam) return null;
+        return (
+          <MatchCard
+            key={match.id}
+            match={match}
+            homeTeam={homeTeam}
+            awayTeam={awayTeam}
+            players={players}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 interface FixtureData {
   teams: Team[];
@@ -135,22 +166,28 @@ export default function FixturePage() {
                 title="Maç bulunamadı"
                 description="Bu seçime uygun maç yok. Farklı bir hafta veya takım deneyin."
               />
+            ) : selectedTeamId || !hasGroups(teams) ? (
+              <MatchGrid
+                matches={displayMatches}
+                teamMap={teamMap}
+                players={players}
+              />
             ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {displayMatches.map((match) => {
-                  const homeTeam = teamMap.get(match.homeTeamId);
-                  const awayTeam = teamMap.get(match.awayTeamId);
-                  if (!homeTeam || !awayTeam) return null;
-                  return (
-                    <MatchCard
-                      key={match.id}
-                      match={match}
-                      homeTeam={homeTeam}
-                      awayTeam={awayTeam}
+              <div className="space-y-8">
+                {groupMatches(displayMatches, teams).map((bucket) => (
+                  <div key={bucket.key} className="space-y-3">
+                    {bucket.label ? (
+                      <h2 className="font-heading text-lg font-semibold tracking-tight">
+                        {bucket.label}
+                      </h2>
+                    ) : null}
+                    <MatchGrid
+                      matches={bucket.matches}
+                      teamMap={teamMap}
                       players={players}
                     />
-                  );
-                })}
+                  </div>
+                ))}
               </div>
             )}
           </div>

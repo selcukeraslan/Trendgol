@@ -30,7 +30,7 @@ export function TeamLogo({ team, size = "md", className }: TeamLogoProps) {
         sizeClasses[size],
         className,
       )}
-      style={{ backgroundColor: team.color }}
+      style={{ backgroundColor: team.color || "#475569" }}
       aria-hidden="true"
     >
       {team.logoUrl ? (
@@ -41,7 +41,7 @@ export function TeamLogo({ team, size = "md", className }: TeamLogoProps) {
           className="size-full rounded-full object-cover"
         />
       ) : (
-        getInitials(team.name)
+        getInitials(team.name) || "?"
       )}
     </span>
   );

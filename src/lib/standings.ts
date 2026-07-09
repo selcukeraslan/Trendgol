@@ -39,7 +39,10 @@ export function calculateStandings(
         m.awayScore != null,
     )
     .sort((a, b) => {
-      const diff = new Date(a.date).getTime() - new Date(b.date).getTime();
+      // Tarihsiz maçlar sona alınır.
+      const at = a.date ? new Date(a.date).getTime() : Infinity;
+      const bt = b.date ? new Date(b.date).getTime() : Infinity;
+      const diff = at - bt;
       return diff !== 0 ? diff : a.time.localeCompare(b.time);
     });
 

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ArrowRight, Trophy } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import type { BlogPost, SiteSettings } from "@/types";
@@ -52,20 +52,9 @@ export function Hero({ settings, posts = [] }: HeroProps) {
               hasPosts ? "lg:text-left" : "mx-auto max-w-3xl",
             )}
           >
-            {settings?.prizePool ? (
-              <span
-                className={cn(
-                  "inline-flex items-center gap-2 rounded-full border border-gold/30 bg-gold/10 px-4 py-1.5 text-sm font-medium text-gold",
-                )}
-              >
-                <Trophy className="size-4" aria-hidden="true" />
-                {settings.prizePool} ödül havuzu
-              </span>
-            ) : null}
-
             <h1
               className={cn(
-                "mt-6 font-heading text-4xl font-bold tracking-tight text-balance text-white sm:text-5xl lg:text-6xl",
+                "font-heading text-4xl font-bold tracking-tight text-balance text-white sm:text-5xl lg:text-6xl",
                 hasPosts ? "max-w-xl" : "mx-auto max-w-3xl",
               )}
             >

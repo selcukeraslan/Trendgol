@@ -40,64 +40,121 @@ function MatchScore({ match }: { match: Match }) {
   );
 }
 
-/** Soft futbol topu simgesi (golcü isimleri için). */
+/** Klasik siyah-beyaz futbol topu simgesi (golcü isimleri için). */
 function BallIcon({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M12 7.5 14.6 9.4 13.6 12.5 10.4 12.5 9.4 9.4Z" />
-      <path d="M12 7.5V4.5M14.6 9.4l2.7-1M13.6 12.5l1.8 2.4M10.4 12.5l-1.8 2.4M9.4 9.4l-2.7-1" />
+    <svg viewBox="0 0 24 24" className={className} aria-hidden="true">
+      <circle
+        cx="12"
+        cy="12"
+        r="9"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+      />
+      {/* Merkez beşgen */}
+      <path
+        fill="currentColor"
+        d="M12 9.3 14.57 11.17 13.59 14.18 10.41 14.18 9.43 11.17Z"
+      />
+      {/* Beşgen köşelerinden çembere uzanan dikişler */}
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinecap="round"
+        d="M12 9.3V3.5M14.57 11.17 19.8 9.47M13.59 14.18 16.82 18.63M10.41 14.18 7.18 18.63M9.43 11.17 4.2 9.47"
+      />
     </svg>
   );
 }
 
-/** Oynanan maçta hangi takımdan kimin gol attığını gösterir. */
-function MatchScorers({
+/** Küçük kart göstergesi — kırmızı(lar) sonra sarı(lar). */
+function CardSquares({ yellow, red }: { yellow: number; red: number }) {
+  if (yellow === 0 && red === 0) return null;
+  return (
+    <span className="flex shrink-0 items-center gap-0.5" aria-hidden="true">
+      {Array.from({ length: red }).map((_, i) => (
+        <span key={`r${i}`} className="h-3 w-2 rounded-[1.5px] bg-destructive" />
+      ))}
+      {Array.from({ length: yellow }).map((_, i) => (
+        <span key={`y${i}`} className="h-3 w-2 rounded-[1.5px] bg-[#f3c94d]" />
+      ))}
+    </span>
+  );
+}
+
+interface TeamEvents {
+  scorers: { name: string; goals: number }[];
+  cards: { name: string; yellow: number; red: number }[];
+}
+
+/** Oynanan maçta golcü ve kart olaylarını takım bazında gösterir. */
+function MatchEvents({
   match,
   players,
 }: {
   match: Match;
   players?: Player[];
 }) {
-  if (match.status !== "played" || !match.scorers?.length || !players) {
-    return null;
-  }
+  if (match.status !== "played" || !players) return null;
+  const scorers = match.scorers ?? [];
+  const cards = match.cards ?? [];
+  if (scorers.length === 0 && cards.length === 0) return null;
 
   const playerMap = new Map(players.map((p) => [p.id, p]));
-  const home: { name: string; goals: number }[] = [];
-  const away: { name: string; goals: number }[] = [];
 
-  for (const scorer of match.scorers) {
-    const player = playerMap.get(scorer.playerId);
-    if (!player) continue;
-    const entry = { name: player.name, goals: scorer.goals };
-    if (player.teamId === match.homeTeamId) home.push(entry);
-    else if (player.teamId === match.awayTeamId) away.push(entry);
+  function buildTeam(teamId: string): TeamEvents {
+    const scorerLines: { name: string; goals: number }[] = [];
+    for (const s of scorers) {
+      const player = playerMap.get(s.playerId);
+      if (player && player.teamId === teamId) {
+        scorerLines.push({ name: player.name, goals: s.goals });
+      }
+    }
+    const cardMap = new Map<
+      string,
+      { name: string; yellow: number; red: number }
+    >();
+    for (const c of cards) {
+      const player = playerMap.get(c.playerId);
+      if (!player || player.teamId !== teamId) continue;
+      const cur = cardMap.get(c.playerId) ?? {
+        name: player.name,
+        yellow: 0,
+        red: 0,
+      };
+      if (c.type === "red") cur.red += 1;
+      else cur.yellow += 1;
+      cardMap.set(c.playerId, cur);
+    }
+    return { scorers: scorerLines, cards: [...cardMap.values()] };
   }
 
-  if (home.length === 0 && away.length === 0) return null;
+  const home = buildTeam(match.homeTeamId);
+  const away = buildTeam(match.awayTeamId);
 
-  const renderList = (list: { name: string; goals: number }[]) => (
+  const renderCol = (data: TeamEvents) => (
     <ul className="space-y-1.5 text-center text-xs">
-      {list.map((s, i) => (
+      {data.scorers.map((s, i) => (
         <li
-          key={i}
+          key={`g${i}`}
           className="flex items-center justify-center gap-1.5 text-muted-foreground"
         >
-          <BallIcon className="size-3.5 shrink-0 text-muted-foreground/70" />
+          <BallIcon className="size-4 shrink-0 text-foreground/75" />
           <span className="font-medium text-foreground">{s.name}</span>
           {s.goals > 1 ? (
             <span className="text-muted-foreground">×{s.goals}</span>
           ) : null}
+        </li>
+      ))}
+      {data.cards.map((c, i) => (
+        <li
+          key={`c${i}`}
+          className="flex items-center justify-center gap-1.5 text-muted-foreground"
+        >
+          <CardSquares yellow={c.yellow} red={c.red} />
+          <span className="font-medium text-foreground">{c.name}</span>
         </li>
       ))}
     </ul>
@@ -105,8 +162,8 @@ function MatchScorers({
 
   return (
     <div className="mt-4 grid grid-cols-2 gap-6 border-t border-border/60 pt-3 sm:gap-10">
-      {renderList(home)}
-      {renderList(away)}
+      {renderCol(home)}
+      {renderCol(away)}
     </div>
   );
 }
@@ -156,22 +213,30 @@ export function MatchCard({
         </div>
       </div>
 
-      <MatchScorers match={match} players={players} />
+      <MatchEvents match={match} players={players} />
 
-      <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-border/60 pt-3 text-xs text-muted-foreground">
-        <span className="flex items-center gap-1">
-          <CalendarDays className="size-3.5" aria-hidden="true" />
-          {formatShortDate(match.date)}
-        </span>
-        <span className="flex items-center gap-1">
-          <Clock className="size-3.5" aria-hidden="true" />
-          {match.time}
-        </span>
-        <span className="flex items-center gap-1">
-          <MapPin className="size-3.5" aria-hidden="true" />
-          {match.venue}
-        </span>
-      </div>
+      {match.date || match.time || match.venue ? (
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-x-4 gap-y-1 border-t border-border/60 pt-3 text-xs text-muted-foreground">
+          {match.date ? (
+            <span className="flex items-center gap-1">
+              <CalendarDays className="size-3.5" aria-hidden="true" />
+              {formatShortDate(match.date)}
+            </span>
+          ) : null}
+          {match.time ? (
+            <span className="flex items-center gap-1">
+              <Clock className="size-3.5" aria-hidden="true" />
+              {match.time}
+            </span>
+          ) : null}
+          {match.venue ? (
+            <span className="flex items-center gap-1">
+              <MapPin className="size-3.5" aria-hidden="true" />
+              {match.venue}
+            </span>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   );
 }

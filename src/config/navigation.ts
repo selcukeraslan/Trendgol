@@ -26,7 +26,7 @@ export const publicNavItems: NavItem[] = [
   { label: "Ana Sayfa", href: "/" },
   { label: "Fikstür", href: "/fikstur" },
   { label: "Puan Durumu", href: "/puan-durumu" },
-  { label: "Gol Krallığı", href: "/gol-krali" },
+  { label: "İstatistikler", href: "/istatistikler" },
   { label: "Takımlar", href: "/takimlar" },
   { label: "Blog", href: "/blog" },
   { label: "Biz Kimiz", href: "/biz-kimiz" },

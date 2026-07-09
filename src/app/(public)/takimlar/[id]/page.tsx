@@ -90,7 +90,11 @@ export default function TeamDetailPage() {
         m.status === "played" &&
         (m.homeTeamId === team.id || m.awayTeamId === team.id),
     )
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort(
+      (a, b) =>
+        (b.date ? new Date(b.date).getTime() : 0) -
+        (a.date ? new Date(a.date).getTime() : 0),
+    )
     .slice(0, 4);
 
   return (

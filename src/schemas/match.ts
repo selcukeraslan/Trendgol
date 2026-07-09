@@ -1,22 +1,32 @@
 // Maç formu doğrulama şeması. Takım farklılığı ve oynanan maç skoru kuralları içerir.
 import { z } from "zod";
 
+// Yalnızca ev sahibi/deplasman takımları zorunludur; hafta, tarih, saat, saha
+// ve skorlar opsiyoneldir. Boş bırakılan alanlar kayıtta boş/null olur.
 export const matchSchema = z
   .object({
-    week: z.string().min(1, "Hafta gerekli."),
+    week: z.string(),
     homeTeamId: z.string().min(1, "Ev sahibi seçin."),
     awayTeamId: z.string().min(1, "Deplasman seçin."),
-    date: z.string().min(1, "Tarih gerekli."),
-    time: z.string().min(1, "Saat gerekli."),
-    venue: z.string().min(1, "Saha gerekli."),
+    date: z.string(),
+    time: z.string(),
+    venue: z.string(),
     status: z.enum(["scheduled", "played", "postponed"]),
     homeScore: z.string().optional(),
     awayScore: z.string().optional(),
     scorers: z
       .array(
         z.object({
-          playerId: z.string().min(1, "Oyuncu seçin."),
-          goals: z.string().min(1, "Gol sayısı girin."),
+          playerId: z.string(),
+          goals: z.string(),
+        }),
+      )
+      .optional(),
+    cards: z
+      .array(
+        z.object({
+          playerId: z.string(),
+          type: z.enum(["yellow", "red"]),
         }),
       )
       .optional(),
@@ -24,10 +34,6 @@ export const matchSchema = z
   .refine((d) => d.homeTeamId !== d.awayTeamId, {
     message: "Ev sahibi ve deplasman farklı olmalı.",
     path: ["awayTeamId"],
-  })
-  .refine((d) => d.status !== "played" || (!!d.homeScore && !!d.awayScore), {
-    message: "Oynanan maç için skor girin.",
-    path: ["homeScore"],
   });
 
 export type MatchFormValues = z.infer<typeof matchSchema>;

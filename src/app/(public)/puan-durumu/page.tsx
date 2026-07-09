@@ -7,6 +7,7 @@ import type { Match, Team } from "@/types";
 import { getMatches } from "@/lib/repository/matchRepository";
 import { getTeams } from "@/lib/repository/teamRepository";
 import { calculateStandings } from "@/lib/standings";
+import { groupTeams } from "@/lib/groups";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { PageHeader } from "@/components/common/page-header";
@@ -28,10 +29,7 @@ export default function StandingsPage() {
 
   const teams = React.useMemo(() => data?.teams ?? [], [data]);
   const matches = React.useMemo(() => data?.matches ?? [], [data]);
-  const standings = React.useMemo(
-    () => calculateStandings(teams, matches),
-    [teams, matches],
-  );
+  const buckets = React.useMemo(() => groupTeams(teams), [teams]);
 
   return (
     <>
@@ -45,19 +43,28 @@ export default function StandingsPage() {
           <LoadingSkeleton variant="row" count={8} />
         ) : error ? (
           <ErrorState message={error} />
-        ) : standings.length === 0 ? (
+        ) : teams.length === 0 ? (
           <EmptyState
             icon={<ListOrdered className="size-6" />}
             title="Puan durumu henüz oluşmadı"
             description="Maçlar oynandıkça puan durumu burada görünecek."
           />
         ) : (
-          <div className="space-y-4">
-            <StandingsTable
-              standings={standings}
-              teams={teams}
-              prizeZone={3}
-            />
+          <div className="space-y-8">
+            {buckets.map((bucket) => (
+              <div key={bucket.key} className="space-y-3">
+                {bucket.label ? (
+                  <h2 className="font-heading text-xl font-bold tracking-tight">
+                    {bucket.label}
+                  </h2>
+                ) : null}
+                <StandingsTable
+                  standings={calculateStandings(bucket.teams, matches)}
+                  teams={bucket.teams}
+                  prizeZone={3}
+                />
+              </div>
+            ))}
             <p className="text-xs text-muted-foreground">
               O: Oynanan · G: Galibiyet · B: Beraberlik · M: Mağlubiyet · AG:
               Atılan Gol · YG: Yenilen Gol · Av: Averaj · P: Puan · Form: Son 5

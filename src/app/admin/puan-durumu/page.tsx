@@ -4,6 +4,7 @@ import * as React from "react";
 import { Info } from "lucide-react";
 
 import { calculateStandings } from "@/lib/standings";
+import { groupTeams } from "@/lib/groups";
 import { useTeamStore } from "@/store/teamStore";
 import { useMatchStore } from "@/store/matchStore";
 import { StandingsTable } from "@/components/standings/standings-table";
@@ -23,10 +24,7 @@ export default function AdminStandingsPage() {
     void loadMatches();
   }, [loadTeams, loadMatches]);
 
-  const standings = React.useMemo(
-    () => calculateStandings(teams, matches),
-    [teams, matches],
-  );
+  const buckets = React.useMemo(() => groupTeams(teams), [teams]);
 
   return (
     <div className="space-y-6">
@@ -53,7 +51,22 @@ export default function AdminStandingsPage() {
       {!loaded ? (
         <LoadingSkeleton variant="row" count={8} />
       ) : (
-        <StandingsTable standings={standings} teams={teams} prizeZone={3} />
+        <div className="space-y-8">
+          {buckets.map((bucket) => (
+            <div key={bucket.key} className="space-y-3">
+              {bucket.label ? (
+                <h2 className="font-heading text-lg font-bold tracking-tight">
+                  {bucket.label}
+                </h2>
+              ) : null}
+              <StandingsTable
+                standings={calculateStandings(bucket.teams, matches)}
+                teams={bucket.teams}
+                prizeZone={3}
+              />
+            </div>
+          ))}
+        </div>
       )}
     </div>
   );

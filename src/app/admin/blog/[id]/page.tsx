@@ -216,6 +216,7 @@ export default function AdminBlogEditorPage() {
                     folder="blog"
                     alt="Kapak görseli önizleme"
                     previewClassName="h-40"
+                    aspect={16 / 9}
                   />
                 </FormControl>
                 <FormMessage />

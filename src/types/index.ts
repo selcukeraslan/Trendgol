@@ -7,6 +7,9 @@ export type MatchStatus = "scheduled" | "played" | "postponed";
 /** Oyuncu mevkii. */
 export type PlayerPosition = "goalkeeper" | "defender" | "midfielder" | "forward";
 
+/** Turnuva grubu. Atanmamışsa (undefined) takım grupsuzdur. */
+export type TeamGroup = "A" | "B";
+
 export interface Team {
   id: string;
   name: string;
@@ -17,6 +20,8 @@ export interface Team {
   captain: string;
   description: string;
   photoUrl?: string;
+  /** A veya B grubu; boşsa grupsuz. */
+  group?: TeamGroup;
   createdAt: string; // ISO
 }
 
@@ -34,6 +39,15 @@ export interface MatchScorer {
   goals: number;
 }
 
+/** Kart türü. */
+export type CardType = "yellow" | "red";
+
+/** Bir maçta bir oyuncunun gördüğü kart (her satır tek kart). */
+export interface CardRecord {
+  playerId: string;
+  type: CardType;
+}
+
 export interface Match {
   id: string;
   week: number;
@@ -47,6 +61,8 @@ export interface Match {
   awayScore?: number | null;
   /** Maçta gol atan oyuncular. Gol krallığı bundan türetilir. */
   scorers?: MatchScorer[];
+  /** Maçta kart gören oyuncular. Kart istatistikleri bundan türetilir. */
+  cards?: CardRecord[];
 }
 
 /** Maç golcülerinden türetilir; depolanmaz. */
@@ -56,6 +72,16 @@ export interface TopScorer {
   teamId: string;
   teamName: string;
   goals: number;
+}
+
+/** Maç kartlarından türetilir; depolanmaz. */
+export interface PlayerCardStat {
+  playerId: string;
+  playerName: string;
+  teamId: string;
+  teamName: string;
+  yellow: number;
+  red: number;
 }
 
 /** Tek maç sonucu (form için). W: galibiyet, D: beraberlik, L: mağlubiyet. */
@@ -100,6 +126,12 @@ export interface SiteContact {
   whatsapp?: string;
 }
 
+/** "Nasıl Katılırım" adımı (ikon sabittir, başlık/metin düzenlenebilir). */
+export interface HowToJoinStep {
+  title: string;
+  text: string;
+}
+
 export interface SiteSettings {
   /** Site logosu görsel URL'i. Boşsa "HS" rozeti gösterilir. */
   logoUrl?: string;
@@ -113,4 +145,15 @@ export interface SiteSettings {
   contact: SiteContact;
   /** Sponsor / iş ortağı adları — ana sayfada gösterilir. */
   sponsors: string[];
+  /** Kurallar PDF'inin public URL'i. Boşsa "Kuralları İncele" linki gizlenir. */
+  rulesPdfUrl?: string;
+  /** Ana sayfa "Katılım Şartları" maddeleri. Boşsa varsayılanlar gösterilir. */
+  participationTerms: string[];
+  /** "Nasıl Katılırım" adımları. Boşsa varsayılanlar gösterilir. */
+  howToJoinSteps: HowToJoinStep[];
+  /** Alt CTA bölümü başlığı ve metni. Boşsa varsayılanlar gösterilir. */
+  ctaTitle: string;
+  ctaText: string;
+  /** Footer tanıtım metni. Boşsa varsayılan gösterilir. */
+  footerDescription: string;
 }

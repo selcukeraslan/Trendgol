@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { uploadImage } from "@/lib/supabase/storage";
 import { Button } from "@/components/ui/button";
 import { ImagePreview } from "@/components/common/image-preview";
+import { ImageCropper } from "@/components/common/image-cropper";
 
 interface ImageUploadProps {
   /** Mevcut görsel URL'i (yüklenince güncellenir). */
@@ -17,11 +18,13 @@ interface ImageUploadProps {
   alt?: string;
   /** Önizleme kutusu boyut sınıfları. */
   previewClassName?: string;
+  /** Kırpma çerçevesi en-boy oranı (genişlik / yükseklik). Varsayılan kare. */
+  aspect?: number;
 }
 
 /**
- * Dosya seçip Supabase Storage'a yükleyen, yüklenen görselin önizlemesini
- * gösteren yeniden kullanılabilir bileşen. URL alanlarının yerini alır.
+ * Dosya seçip kırpma/çerçeveleme sonrası Supabase Storage'a yükleyen,
+ * yüklenen görselin önizlemesini gösteren yeniden kullanılabilir bileşen.
  */
 export function ImageUpload({
   value,
@@ -29,15 +32,24 @@ export function ImageUpload({
   folder = "uploads",
   alt = "Görsel",
   previewClassName,
+  aspect = 1,
 }: ImageUploadProps) {
   const [uploading, setUploading] = React.useState(false);
+  const [pendingFile, setPendingFile] = React.useState<File | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
 
-  async function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
+  function handleFile(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
-    if (!file) return;
+    if (inputRef.current) inputRef.current.value = "";
+    if (file) setPendingFile(file);
+  }
+
+  async function handleCropped(blob: Blob) {
+    setPendingFile(null);
     setUploading(true);
     try {
+      const ext = blob.type === "image/png" ? "png" : "jpg";
+      const file = new File([blob], `image.${ext}`, { type: blob.type });
       const url = await uploadImage(file, folder);
       onChange(url);
       toast.success("Görsel yüklendi.");
@@ -45,7 +57,6 @@ export function ImageUpload({
       toast.error("Yükleme başarısız. Tekrar deneyin.");
     } finally {
       setUploading(false);
-      if (inputRef.current) inputRef.current.value = "";
     }
   }
 
@@ -85,6 +96,15 @@ export function ImageUpload({
           </Button>
         ) : null}
       </div>
+
+      {pendingFile ? (
+        <ImageCropper
+          file={pendingFile}
+          aspect={aspect}
+          onCancel={() => setPendingFile(null)}
+          onCrop={handleCropped}
+        />
+      ) : null}
     </div>
   );
 }

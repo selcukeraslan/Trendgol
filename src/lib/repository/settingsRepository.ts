@@ -1,4 +1,4 @@
-import type { SiteContact, SiteSettings } from "@/types";
+import type { HowToJoinStep, SiteContact, SiteSettings } from "@/types";
 import { getSupabase } from "@/lib/supabase/client";
 
 const TABLE = "site_settings";
@@ -15,6 +15,12 @@ interface SettingsRow {
   about_text: string;
   contact: SiteContact;
   sponsors: string[] | null;
+  rules_pdf_url: string | null;
+  participation_terms: string[] | null;
+  how_to_join_steps: HowToJoinStep[] | null;
+  cta_title: string | null;
+  cta_text: string | null;
+  footer_description: string | null;
 }
 
 function fromRow(r: SettingsRow): SiteSettings {
@@ -28,6 +34,12 @@ function fromRow(r: SettingsRow): SiteSettings {
     aboutText: r.about_text,
     contact: r.contact,
     sponsors: r.sponsors ?? [],
+    rulesPdfUrl: r.rules_pdf_url ?? undefined,
+    participationTerms: r.participation_terms ?? [],
+    howToJoinSteps: r.how_to_join_steps ?? [],
+    ctaTitle: r.cta_title ?? "",
+    ctaText: r.cta_text ?? "",
+    footerDescription: r.footer_description ?? "",
   };
 }
 
@@ -61,6 +73,16 @@ export async function updateSiteSettings(
   if (input.aboutText !== undefined) patch.about_text = input.aboutText;
   if (input.contact !== undefined) patch.contact = input.contact;
   if (input.sponsors !== undefined) patch.sponsors = input.sponsors;
+  if (input.rulesPdfUrl !== undefined)
+    patch.rules_pdf_url = input.rulesPdfUrl || null;
+  if (input.participationTerms !== undefined)
+    patch.participation_terms = input.participationTerms;
+  if (input.howToJoinSteps !== undefined)
+    patch.how_to_join_steps = input.howToJoinSteps;
+  if (input.ctaTitle !== undefined) patch.cta_title = input.ctaTitle;
+  if (input.ctaText !== undefined) patch.cta_text = input.ctaText;
+  if (input.footerDescription !== undefined)
+    patch.footer_description = input.footerDescription;
 
   const { data, error } = await getSupabase()
     .from(TABLE)

@@ -1,4 +1,4 @@
-import type { Team } from "@/types";
+import type { Team, TeamGroup } from "@/types";
 import { getSupabase } from "@/lib/supabase/client";
 
 const TABLE = "teams";
@@ -11,6 +11,7 @@ interface TeamRow {
   captain: string;
   description: string;
   photo_url: string | null;
+  group_name: string | null;
   created_at: string;
 }
 
@@ -23,6 +24,7 @@ function fromRow(r: TeamRow): Team {
     captain: r.captain,
     description: r.description,
     photoUrl: r.photo_url ?? undefined,
+    group: (r.group_name as TeamGroup) || undefined,
     createdAt: r.created_at,
   };
 }
@@ -58,6 +60,7 @@ export async function createTeam(
       captain: input.captain,
       description: input.description,
       photo_url: input.photoUrl ?? null,
+      group_name: input.group ?? null,
     })
     .select("*")
     .single();
@@ -76,6 +79,7 @@ export async function updateTeam(
   if (input.captain !== undefined) patch.captain = input.captain;
   if (input.description !== undefined) patch.description = input.description;
   if (input.photoUrl !== undefined) patch.photo_url = input.photoUrl || null;
+  if (input.group !== undefined) patch.group_name = input.group || null;
 
   const { data, error } = await getSupabase()
     .from(TABLE)

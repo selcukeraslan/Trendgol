@@ -80,7 +80,8 @@ export default function AdminFixturePage() {
     },
     {
       header: "Tarih",
-      cell: (m) => `${formatShortDate(m.date)} · ${m.time}`,
+      cell: (m) =>
+        [formatShortDate(m.date), m.time].filter(Boolean).join(" · ") || "—",
     },
     { header: "Durum", cell: (m) => <StatusBadge status={m.status} /> },
   ];
