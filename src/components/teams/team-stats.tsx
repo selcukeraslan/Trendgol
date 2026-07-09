@@ -35,6 +35,7 @@ export function TeamStats({ standing }: { standing: Standing | undefined }) {
     goalsAgainst: 0,
     goalDifference: 0,
     points: 0,
+    form: [],
   };
 
   return (

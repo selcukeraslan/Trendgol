@@ -26,37 +26,57 @@ export function calculateStandings(
       goalsAgainst: 0,
       goalDifference: 0,
       points: 0,
+      form: [],
     });
   }
 
-  for (const match of matches) {
-    if (match.status !== "played") continue;
-    if (match.homeScore == null || match.awayScore == null) continue;
+  // Form kronolojik olmalı: oynanan maçları tarihe (ve saate) göre sırala.
+  const playedMatches = matches
+    .filter(
+      (m) =>
+        m.status === "played" &&
+        m.homeScore != null &&
+        m.awayScore != null,
+    )
+    .sort((a, b) => {
+      const diff = new Date(a.date).getTime() - new Date(b.date).getTime();
+      return diff !== 0 ? diff : a.time.localeCompare(b.time);
+    });
 
+  for (const match of playedMatches) {
     const home = table.get(match.homeTeamId);
     const away = table.get(match.awayTeamId);
     if (!home || !away) continue;
 
+    const homeScore = match.homeScore as number;
+    const awayScore = match.awayScore as number;
+
     home.played += 1;
     away.played += 1;
-    home.goalsFor += match.homeScore;
-    home.goalsAgainst += match.awayScore;
-    away.goalsFor += match.awayScore;
-    away.goalsAgainst += match.homeScore;
+    home.goalsFor += homeScore;
+    home.goalsAgainst += awayScore;
+    away.goalsFor += awayScore;
+    away.goalsAgainst += homeScore;
 
-    if (match.homeScore > match.awayScore) {
+    if (homeScore > awayScore) {
       home.won += 1;
       home.points += WIN_POINTS;
       away.lost += 1;
-    } else if (match.homeScore < match.awayScore) {
+      home.form.push("W");
+      away.form.push("L");
+    } else if (homeScore < awayScore) {
       away.won += 1;
       away.points += WIN_POINTS;
       home.lost += 1;
+      home.form.push("L");
+      away.form.push("W");
     } else {
       home.drawn += 1;
       away.drawn += 1;
       home.points += DRAW_POINTS;
       away.points += DRAW_POINTS;
+      home.form.push("D");
+      away.form.push("D");
     }
   }
 

@@ -3,9 +3,10 @@
 import * as React from "react";
 import { CalendarX2 } from "lucide-react";
 
-import type { Match, Team } from "@/types";
+import type { Match, Player, Team } from "@/types";
 import { getMatches } from "@/lib/repository/matchRepository";
 import { getTeams } from "@/lib/repository/teamRepository";
+import { getPlayers } from "@/lib/repository/playerRepository";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { PageHeader } from "@/components/common/page-header";
@@ -18,6 +19,7 @@ import { WeekSelector } from "@/components/fixtures/week-selector";
 interface FixtureData {
   teams: Team[];
   matches: Match[];
+  players: Player[];
 }
 
 function getDefaultWeek(matches: Match[]): number {
@@ -30,14 +32,20 @@ function getDefaultWeek(matches: Match[]): number {
 
 export default function FixturePage() {
   const { data, loading, error } = useAsyncData<FixtureData>(async () => {
-    const [teams, matches] = await Promise.all([getTeams(), getMatches()]);
-    return { teams, matches };
+    const [teams, matches, players] = await Promise.all([
+      getTeams(),
+      getMatches(),
+      getPlayers(),
+    ]);
+    return { teams, matches, players };
   }, []);
 
   const [selectedWeek, setSelectedWeek] = React.useState<number | null>(null);
+  const [selectedTeamId, setSelectedTeamId] = React.useState("");
 
   const teams = React.useMemo(() => data?.teams ?? [], [data]);
   const matches = React.useMemo(() => data?.matches ?? [], [data]);
+  const players = React.useMemo(() => data?.players ?? [], [data]);
   const teamMap = React.useMemo(
     () => new Map(teams.map((team) => [team.id, team])),
     [teams],
@@ -48,9 +56,21 @@ export default function FixturePage() {
   );
 
   const activeWeek = selectedWeek ?? getDefaultWeek(matches);
-  const weekMatches = matches
-    .filter((m) => m.week === activeWeek)
-    .sort((a, b) => a.time.localeCompare(b.time));
+
+  // Takım seçiliyse o takımın tüm maçları (haftaya göre), değilse aktif hafta.
+  const displayMatches = React.useMemo(() => {
+    if (selectedTeamId) {
+      return matches
+        .filter(
+          (m) =>
+            m.homeTeamId === selectedTeamId || m.awayTeamId === selectedTeamId,
+        )
+        .sort((a, b) => a.week - b.week || a.time.localeCompare(b.time));
+    }
+    return matches
+      .filter((m) => m.week === activeWeek)
+      .sort((a, b) => a.time.localeCompare(b.time));
+  }, [matches, selectedTeamId, activeWeek]);
 
   return (
     <>
@@ -72,26 +92,67 @@ export default function FixturePage() {
           />
         ) : (
           <div className="space-y-6">
-            <WeekSelector
-              weeks={weeks}
-              value={activeWeek}
-              onChange={setSelectedWeek}
-            />
-            <div className="grid gap-4 sm:grid-cols-2">
-              {weekMatches.map((match) => {
-                const homeTeam = teamMap.get(match.homeTeamId);
-                const awayTeam = teamMap.get(match.awayTeamId);
-                if (!homeTeam || !awayTeam) return null;
-                return (
-                  <MatchCard
-                    key={match.id}
-                    match={match}
-                    homeTeam={homeTeam}
-                    awayTeam={awayTeam}
-                  />
-                );
-              })}
+            {/* Filtreler */}
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="text-sm">
+                {selectedTeamId ? (
+                  <span className="text-muted-foreground">
+                    <span className="font-medium text-foreground">
+                      {teamMap.get(selectedTeamId)?.name}
+                    </span>{" "}
+                    takımının tüm maçları
+                  </span>
+                ) : null}
+              </div>
+              <label className="flex items-center gap-2 text-sm">
+                <span className="text-muted-foreground">Takım:</span>
+                <select
+                  value={selectedTeamId}
+                  onChange={(e) => setSelectedTeamId(e.target.value)}
+                  className="h-9 rounded-lg border border-input bg-card px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                >
+                  <option value="">Tüm takımlar</option>
+                  {teams.map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
+
+            {!selectedTeamId ? (
+              <WeekSelector
+                weeks={weeks}
+                value={activeWeek}
+                onChange={setSelectedWeek}
+              />
+            ) : null}
+
+            {displayMatches.length === 0 ? (
+              <EmptyState
+                icon={<CalendarX2 className="size-6" />}
+                title="Maç bulunamadı"
+                description="Bu seçime uygun maç yok. Farklı bir hafta veya takım deneyin."
+              />
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {displayMatches.map((match) => {
+                  const homeTeam = teamMap.get(match.homeTeamId);
+                  const awayTeam = teamMap.get(match.awayTeamId);
+                  if (!homeTeam || !awayTeam) return null;
+                  return (
+                    <MatchCard
+                      key={match.id}
+                      match={match}
+                      homeTeam={homeTeam}
+                      awayTeam={awayTeam}
+                      players={players}
+                    />
+                  );
+                })}
+              </div>
+            )}
           </div>
         )}
       </Container>

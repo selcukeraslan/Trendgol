@@ -58,6 +58,9 @@ export interface TopScorer {
   goals: number;
 }
 
+/** Tek maç sonucu (form için). W: galibiyet, D: beraberlik, L: mağlubiyet. */
+export type FormResult = "W" | "D" | "L";
+
 /** Maç skorlarından türetilir; depolanmaz. */
 export interface Standing {
   teamId: string;
@@ -70,6 +73,8 @@ export interface Standing {
   goalsAgainst: number;
   goalDifference: number;
   points: number;
+  /** Kronolojik sıra (eskiden yeniye) tüm maç sonuçları; tabloda son 5 gösterilir. */
+  form: FormResult[];
 }
 
 export interface BlogPost {
