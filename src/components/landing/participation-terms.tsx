@@ -1,14 +1,8 @@
-import { CheckCircle2, Coins, Trophy, Wallet } from "lucide-react";
+import { CheckCircle2, Coins, FileText, Trophy, Wallet } from "lucide-react";
 
 import type { SiteSettings } from "@/types";
+import { DEFAULT_PARTICIPATION_TERMS } from "@/lib/content-defaults";
 import { Section } from "@/components/common/section";
-
-const terms = [
-  "Her takım en az 7 oyuncudan oluşmalı.",
-  "Katılım ücreti sezon başında ödenir.",
-  "Maç başı ücret her karşılaşmadan önce tahsil edilir.",
-  "Tüm maçlar lig kurallarına göre oynanır.",
-];
 
 /** Gösterilebilir bir tutar mı? Boş, "—" veya sıfır değerler gizlenir. */
 function hasAmount(value?: string): boolean {
@@ -21,6 +15,12 @@ function hasAmount(value?: string): boolean {
 }
 
 export function ParticipationTerms({ settings }: { settings?: SiteSettings }) {
+  const terms =
+    settings?.participationTerms && settings.participationTerms.length > 0
+      ? settings.participationTerms
+      : DEFAULT_PARTICIPATION_TERMS;
+  const rulesPdfUrl = settings?.rulesPdfUrl;
+
   const cards = [
     {
       icon: Wallet,
@@ -92,6 +92,18 @@ export function ParticipationTerms({ settings }: { settings?: SiteSettings }) {
               </li>
             ))}
           </ul>
+
+          {rulesPdfUrl ? (
+            <a
+              href={rulesPdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-brand hover:underline"
+            >
+              <FileText className="size-4" aria-hidden="true" />
+              Kuralları İncele (PDF)
+            </a>
+          ) : null}
         </div>
       </div>
     </Section>

@@ -35,7 +35,11 @@ export default function AdminDashboardPage() {
 
   const recentScores = matches
     .filter((m) => m.status === "played")
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .sort(
+      (a, b) =>
+        (b.date ? new Date(b.date).getTime() : 0) -
+        (a.date ? new Date(a.date).getTime() : 0),
+    )
     .slice(0, 5);
 
   return (

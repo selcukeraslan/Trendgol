@@ -30,6 +30,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 
+const selectClass =
+  "flex h-9 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+const optionClass = "bg-popover text-popover-foreground";
+
 function toDefaults(team?: Team): TeamFormValues {
   return {
     name: team?.name ?? "",
@@ -38,6 +42,7 @@ function toDefaults(team?: Team): TeamFormValues {
     description: team?.description ?? "",
     logoUrl: team?.logoUrl ?? "",
     photoUrl: team?.photoUrl ?? "",
+    group: team?.group ?? "",
   };
 }
 
@@ -62,11 +67,13 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
   }
 
   async function onSubmit(values: TeamFormValues) {
+    // "" (grupsuz) → undefined.
+    const payload = { ...values, group: values.group || undefined };
     if (team) {
-      await edit(team.id, values);
+      await edit(team.id, payload);
       toast.success("Takım güncellendi.");
     } else {
-      await add(values);
+      await add(payload);
       toast.success("Takım eklendi.");
     }
     setOpen(false);
@@ -133,6 +140,29 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
             </div>
             <FormField
               control={form.control}
+              name="group"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Grup (opsiyonel)</FormLabel>
+                  <FormControl>
+                    <select className={selectClass} {...field}>
+                      <option className={optionClass} value="">
+                        Grupsuz
+                      </option>
+                      <option className={optionClass} value="A">
+                        A Grubu
+                      </option>
+                      <option className={optionClass} value="B">
+                        B Grubu
+                      </option>
+                    </select>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
               name="description"
               render={({ field }) => (
                 <FormItem>
@@ -180,6 +210,7 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
                       folder="teams"
                       alt="Takım fotoğrafı önizleme"
                       previewClassName="h-32"
+                      aspect={16 / 9}
                     />
                   </FormControl>
                   <FormMessage />

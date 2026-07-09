@@ -1,11 +1,19 @@
 "use client";
 
 import * as React from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
+import { Plus, Trash2 } from "lucide-react";
 
 import { settingsSchema, type SettingsFormValues } from "@/schemas/settings";
+import {
+  DEFAULT_CTA_TEXT,
+  DEFAULT_CTA_TITLE,
+  DEFAULT_FOOTER_DESCRIPTION,
+  DEFAULT_HOW_TO_JOIN_STEPS,
+  DEFAULT_PARTICIPATION_TERMS,
+} from "@/lib/content-defaults";
 import { useSettingsStore } from "@/store/settingsStore";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +29,7 @@ import {
 } from "@/components/ui/form";
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 import { ImageUpload } from "@/components/common/image-upload";
+import { FileUpload } from "@/components/common/file-upload";
 
 const emptyDefaults: SettingsFormValues = {
   logoUrl: "",
@@ -32,6 +41,12 @@ const emptyDefaults: SettingsFormValues = {
   aboutText: "",
   sponsors: "",
   contact: { phone: "", email: "", address: "", instagram: "", whatsapp: "" },
+  rulesPdfUrl: "",
+  participationTerms: "",
+  howToJoinSteps: [],
+  ctaTitle: "",
+  ctaText: "",
+  footerDescription: "",
 };
 
 export default function AdminSettingsPage() {
@@ -49,8 +64,22 @@ export default function AdminSettingsPage() {
     defaultValues: emptyDefaults,
   });
 
+  const {
+    fields: stepFields,
+    append: appendStep,
+    remove: removeStep,
+  } = useFieldArray({ control: form.control, name: "howToJoinSteps" });
+
   React.useEffect(() => {
     if (settings) {
+      const terms =
+        settings.participationTerms.length > 0
+          ? settings.participationTerms
+          : DEFAULT_PARTICIPATION_TERMS;
+      const steps =
+        settings.howToJoinSteps.length > 0
+          ? settings.howToJoinSteps
+          : DEFAULT_HOW_TO_JOIN_STEPS;
       form.reset({
         ...settings,
         logoUrl: settings.logoUrl ?? "",
@@ -62,18 +91,32 @@ export default function AdminSettingsPage() {
           instagram: settings.contact.instagram ?? "",
           whatsapp: settings.contact.whatsapp ?? "",
         },
+        rulesPdfUrl: settings.rulesPdfUrl ?? "",
+        participationTerms: terms.join("\n"),
+        howToJoinSteps: steps,
+        ctaTitle: settings.ctaTitle || DEFAULT_CTA_TITLE,
+        ctaText: settings.ctaText || DEFAULT_CTA_TEXT,
+        footerDescription:
+          settings.footerDescription || DEFAULT_FOOTER_DESCRIPTION,
       });
     }
   }, [settings, form]);
 
   async function onSubmit(values: SettingsFormValues) {
-    const { sponsors, ...rest } = values;
+    const { sponsors, participationTerms, howToJoinSteps, ...rest } = values;
     await save({
       ...rest,
       sponsors: (sponsors ?? "")
         .split("\n")
         .map((line) => line.trim())
         .filter(Boolean),
+      participationTerms: (participationTerms ?? "")
+        .split("\n")
+        .map((line) => line.trim())
+        .filter(Boolean),
+      howToJoinSteps: howToJoinSteps
+        .map((s) => ({ title: s.title.trim(), text: s.text.trim() }))
+        .filter((s) => s.title || s.text),
     });
     toast.success("Ayarlar kaydedildi.");
   }
@@ -326,6 +369,187 @@ export default function AdminSettingsPage() {
                 )}
               />
             </div>
+          </section>
+
+          <Separator />
+
+          {/* Kurallar PDF */}
+          <section className="space-y-4">
+            <h2 className="font-heading font-bold">Kurallar (PDF)</h2>
+            <FormField
+              control={form.control}
+              name="rulesPdfUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Kurallar Dosyası</FormLabel>
+                  <FormControl>
+                    <FileUpload
+                      value={field.value}
+                      onChange={field.onChange}
+                      folder="rules"
+                      accept="application/pdf"
+                      label="Yüklenen kuralları görüntüle (PDF)"
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    Yüklenirse ana sayfadaki &quot;Katılım Şartları&quot; ve
+                    kaydol bölümünde &quot;Kuralları İncele&quot; linki görünür.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </section>
+
+          <Separator />
+
+          {/* Katılım Şartları */}
+          <section className="space-y-4">
+            <h2 className="font-heading font-bold">Katılım Şartları</h2>
+            <FormField
+              control={form.control}
+              name="participationTerms"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Maddeler</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      rows={5}
+                      placeholder={"Her satıra bir madde"}
+                      {...field}
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    Her satır bir madde olarak listelenir. Boş bırakılırsa
+                    varsayılan maddeler gösterilir.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </section>
+
+          <Separator />
+
+          {/* Nasıl Katılırım adımları */}
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="font-heading font-bold">Nasıl Katılırım Adımları</h2>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={() => appendStep({ title: "", text: "" })}
+              >
+                <Plus className="size-4" aria-hidden="true" />
+                Adım Ekle
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              İkonlar sıraya göre sabittir; başlık ve açıklamayı düzenleyin.
+            </p>
+            <div className="space-y-3">
+              {stepFields.map((row, index) => (
+                <div
+                  key={row.id}
+                  className="flex items-start gap-2 rounded-lg border border-border p-3"
+                >
+                  <div className="flex-1 space-y-2">
+                    <FormField
+                      control={form.control}
+                      name={`howToJoinSteps.${index}.title`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input placeholder="Adım başlığı" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={form.control}
+                      name={`howToJoinSteps.${index}.text`}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Textarea
+                              rows={2}
+                              placeholder="Adım açıklaması"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive"
+                    aria-label="Adımı kaldır"
+                    onClick={() => removeStep(index)}
+                  >
+                    <Trash2 className="size-4" aria-hidden="true" />
+                  </Button>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <Separator />
+
+          {/* CTA bölümü */}
+          <section className="space-y-4">
+            <h2 className="font-heading font-bold">Alt CTA Bölümü</h2>
+            <FormField
+              control={form.control}
+              name="ctaTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Başlık</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="ctaText"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Açıklama</FormLabel>
+                  <FormControl>
+                    <Textarea rows={2} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+          </section>
+
+          <Separator />
+
+          {/* Footer */}
+          <section className="space-y-4">
+            <h2 className="font-heading font-bold">Alt Bilgi (Footer)</h2>
+            <FormField
+              control={form.control}
+              name="footerDescription"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Tanıtım Metni</FormLabel>
+                  <FormControl>
+                    <Textarea rows={3} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </section>
 
           <Button type="submit" size="lg">

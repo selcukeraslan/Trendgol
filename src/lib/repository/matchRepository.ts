@@ -1,4 +1,4 @@
-import type { Match, MatchScorer, MatchStatus } from "@/types";
+import type { CardRecord, Match, MatchScorer, MatchStatus } from "@/types";
 import { getSupabase } from "@/lib/supabase/client";
 
 const TABLE = "matches";
@@ -8,13 +8,14 @@ interface MatchRow {
   week: number;
   home_team_id: string;
   away_team_id: string;
-  date: string;
+  date: string | null;
   time: string;
   venue: string;
   status: string;
   home_score: number | null;
   away_score: number | null;
   scorers: MatchScorer[] | null;
+  cards: CardRecord[] | null;
 }
 
 function fromRow(r: MatchRow): Match {
@@ -23,13 +24,14 @@ function fromRow(r: MatchRow): Match {
     week: r.week,
     homeTeamId: r.home_team_id,
     awayTeamId: r.away_team_id,
-    date: r.date,
+    date: r.date ?? "",
     time: r.time,
     venue: r.venue,
     status: r.status as MatchStatus,
     homeScore: r.home_score,
     awayScore: r.away_score,
     scorers: r.scorers ?? [],
+    cards: r.cards ?? [],
   };
 }
 
@@ -38,13 +40,15 @@ function toRow(input: Partial<Omit<Match, "id">>): Record<string, unknown> {
   if (input.week !== undefined) patch.week = input.week;
   if (input.homeTeamId !== undefined) patch.home_team_id = input.homeTeamId;
   if (input.awayTeamId !== undefined) patch.away_team_id = input.awayTeamId;
-  if (input.date !== undefined) patch.date = input.date;
+  // Boş tarih timestamptz için null olmalı ("" geçersizdir).
+  if (input.date !== undefined) patch.date = input.date ? input.date : null;
   if (input.time !== undefined) patch.time = input.time;
   if (input.venue !== undefined) patch.venue = input.venue;
   if (input.status !== undefined) patch.status = input.status;
   if (input.homeScore !== undefined) patch.home_score = input.homeScore;
   if (input.awayScore !== undefined) patch.away_score = input.awayScore;
   if (input.scorers !== undefined) patch.scorers = input.scorers;
+  if (input.cards !== undefined) patch.cards = input.cards;
   return patch;
 }
 
@@ -123,6 +127,6 @@ export async function updateMatchStatus(
   const patch: Partial<Match> =
     status === "played"
       ? { status }
-      : { status, homeScore: null, awayScore: null, scorers: [] };
+      : { status, homeScore: null, awayScore: null, scorers: [], cards: [] };
   return updateMatch(id, patch);
 }

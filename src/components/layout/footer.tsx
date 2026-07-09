@@ -1,10 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { AtSign, Mail, MessageCircle, Phone } from "lucide-react";
+import { AtSign, FileText, Mail, MessageCircle, Phone } from "lucide-react";
 
 import type { SiteSettings } from "@/types";
 import { getSiteSettings } from "@/lib/repository/settingsRepository";
+import { DEFAULT_FOOTER_DESCRIPTION } from "@/lib/content-defaults";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { publicNavItems, siteName } from "@/config/navigation";
@@ -38,9 +39,19 @@ export function Footer() {
               </span>
             </div>
             <p className="max-w-xs text-sm text-muted-foreground">
-              Ücretli katılımlı, para ödüllü halı saha futbol ligi. Takımını kur,
-              sahaya çık, ödülü kap.
+              {data?.footerDescription || DEFAULT_FOOTER_DESCRIPTION}
             </p>
+            {data?.rulesPdfUrl ? (
+              <a
+                href={data.rulesPdfUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-medium text-brand transition-colors hover:underline"
+              >
+                <FileText className="size-4" aria-hidden="true" />
+                Kural Kitapçığı (PDF)
+              </a>
+            ) : null}
           </div>
 
           {/* Menü */}

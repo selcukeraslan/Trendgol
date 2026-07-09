@@ -43,7 +43,7 @@ function toDefaults(match?: Match): MatchFormValues {
     homeTeamId: match?.homeTeamId ?? "",
     awayTeamId: match?.awayTeamId ?? "",
     date: match?.date ? match.date.slice(0, 10) : "",
-    time: match?.time ?? "20:00",
+    time: match?.time ?? "",
     venue: match?.venue ?? "",
     status: match?.status ?? "scheduled",
     homeScore: match?.homeScore != null ? String(match.homeScore) : "",
@@ -53,6 +53,8 @@ function toDefaults(match?: Match): MatchFormValues {
         playerId: s.playerId,
         goals: String(s.goals),
       })) ?? [],
+    cards:
+      match?.cards?.map((c) => ({ playerId: c.playerId, type: c.type })) ?? [],
   };
 }
 
@@ -80,6 +82,14 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
   const { fields, append, remove } = useFieldArray({
     control: form.control,
     name: "scorers",
+  });
+  const {
+    fields: cardFields,
+    append: appendCard,
+    remove: removeCard,
+  } = useFieldArray({
+    control: form.control,
+    name: "cards",
   });
 
   // Golcü seçiminde yalnızca maçtaki iki takımın oyuncuları gösterilir.
@@ -109,18 +119,26 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
           .filter((s) => s.playerId && Number(s.goals) > 0)
           .map((s) => ({ playerId: s.playerId, goals: Number(s.goals) }))
       : [];
+    const cards = isPlayed
+      ? (values.cards ?? [])
+          .filter((c) => c.playerId)
+          .map((c) => ({ playerId: c.playerId, type: c.type }))
+      : [];
 
     const input: MatchInput = {
-      week: Number(values.week),
+      week: Number(values.week) || 1,
       homeTeamId: values.homeTeamId,
       awayTeamId: values.awayTeamId,
-      date: new Date(values.date).toISOString(),
+      date: values.date ? new Date(values.date).toISOString() : "",
       time: values.time,
       venue: values.venue,
       status: values.status as MatchStatus,
-      homeScore: isPlayed ? Number(values.homeScore) : null,
-      awayScore: isPlayed ? Number(values.awayScore) : null,
+      homeScore:
+        isPlayed && values.homeScore !== "" ? Number(values.homeScore) : null,
+      awayScore:
+        isPlayed && values.awayScore !== "" ? Number(values.awayScore) : null,
       scorers,
+      cards,
     };
     if (match) {
       await edit(match.id, input);
@@ -393,6 +411,104 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
                             className="text-destructive"
                             aria-label="Golcüyü kaldır"
                             onClick={() => remove(index)}
+                          >
+                            <Trash2 className="size-4" aria-hidden="true" />
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Kartlar — kart istatistikleri bu kayıtlardan türetilir */}
+                <div className="space-y-2 rounded-lg border border-border p-3">
+                  <div className="flex items-center justify-between">
+                    <FormLabel className="mb-0">Kartlar</FormLabel>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      disabled={!homeTeamId || !awayTeamId}
+                      onClick={() =>
+                        appendCard({ playerId: "", type: "yellow" })
+                      }
+                    >
+                      <Plus className="size-4" aria-hidden="true" />
+                      Kart Ekle
+                    </Button>
+                  </div>
+
+                  {cardFields.length === 0 ? (
+                    <p className="text-xs text-muted-foreground">
+                      {homeTeamId && awayTeamId
+                        ? "Henüz kart eklenmedi."
+                        : "Önce ev sahibi ve deplasman takımlarını seçin."}
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {cardFields.map((row, index) => (
+                        <div key={row.id} className="flex items-start gap-2">
+                          <FormField
+                            control={form.control}
+                            name={`cards.${index}.playerId`}
+                            render={({ field }) => (
+                              <FormItem className="flex-1">
+                                <FormControl>
+                                  <select className={selectClass} {...field}>
+                                    <option className={optionClass} value="">
+                                      Oyuncu seçin
+                                    </option>
+                                    {matchPlayers.map((player) => (
+                                      <option
+                                        key={player.id}
+                                        className={optionClass}
+                                        value={player.id}
+                                      >
+                                        {player.name}
+                                        {teamNameById.has(player.teamId)
+                                          ? ` (${teamNameById.get(player.teamId)})`
+                                          : ""}
+                                      </option>
+                                    ))}
+                                  </select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <FormField
+                            control={form.control}
+                            name={`cards.${index}.type`}
+                            render={({ field }) => (
+                              <FormItem className="w-28">
+                                <FormControl>
+                                  <select
+                                    className={selectClass}
+                                    aria-label="Kart türü"
+                                    {...field}
+                                  >
+                                    <option
+                                      className={optionClass}
+                                      value="yellow"
+                                    >
+                                      Sarı
+                                    </option>
+                                    <option className={optionClass} value="red">
+                                      Kırmızı
+                                    </option>
+                                  </select>
+                                </FormControl>
+                                <FormMessage />
+                              </FormItem>
+                            )}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive"
+                            aria-label="Kartı kaldır"
+                            onClick={() => removeCard(index)}
                           >
                             <Trash2 className="size-4" aria-hidden="true" />
                           </Button>

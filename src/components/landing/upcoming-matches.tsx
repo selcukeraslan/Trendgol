@@ -14,7 +14,11 @@ export function UpcomingMatches({ matches, teams }: UpcomingMatchesProps) {
   const teamMap = new Map(teams.map((team) => [team.id, team]));
   const upcoming = matches
     .filter((m) => m.status === "scheduled")
-    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+    .sort(
+      (a, b) =>
+        (a.date ? new Date(a.date).getTime() : Infinity) -
+        (b.date ? new Date(b.date).getTime() : Infinity),
+    )
     .slice(0, 3);
 
   if (upcoming.length === 0) return null;
