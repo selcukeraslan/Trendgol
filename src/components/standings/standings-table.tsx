@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import { cn } from "@/lib/utils";
-import type { Standing, Team } from "@/types";
+import type { FormResult, Standing, Team } from "@/types";
 import {
   Table,
   TableBody,
@@ -11,6 +11,37 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { TeamLogo } from "@/components/teams/team-logo";
+
+const formStyles: Record<FormResult, string> = {
+  W: "bg-emerald-500 text-white",
+  D: "bg-muted-foreground/40 text-foreground",
+  L: "bg-destructive text-white",
+};
+const formLabels: Record<FormResult, string> = { W: "G", D: "B", L: "M" };
+
+/** Son 5 maç formu — renkli G/B/M rozetleri (eskiden yeniye). */
+function FormPills({ form }: { form: FormResult[] }) {
+  const last5 = form.slice(-5);
+  if (last5.length === 0) {
+    return <span className="text-xs text-muted-foreground">—</span>;
+  }
+  return (
+    <div className="flex items-center justify-center gap-1">
+      {last5.map((result, i) => (
+        <span
+          key={i}
+          title={formLabels[result]}
+          className={cn(
+            "flex size-5 items-center justify-center rounded text-[10px] font-bold",
+            formStyles[result],
+          )}
+        >
+          {formLabels[result]}
+        </span>
+      ))}
+    </div>
+  );
+}
 
 interface StandingsTableProps {
   standings: Standing[];
@@ -48,6 +79,11 @@ export function StandingsTable({
             )}
             <TableHead className="text-center">Av</TableHead>
             <TableHead className="text-center font-bold">P</TableHead>
+            {!compact && (
+              <TableHead className="hidden text-center md:table-cell">
+                Form
+              </TableHead>
+            )}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -110,6 +146,11 @@ export function StandingsTable({
                 <TableCell className="text-center font-bold tabular-nums text-brand">
                   {row.points}
                 </TableCell>
+                {!compact && (
+                  <TableCell className="hidden md:table-cell">
+                    <FormPills form={row.form} />
+                  </TableCell>
+                )}
               </TableRow>
             );
           })}

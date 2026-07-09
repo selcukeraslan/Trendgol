@@ -60,7 +60,8 @@ export default function StandingsPage() {
             />
             <p className="text-xs text-muted-foreground">
               O: Oynanan · G: Galibiyet · B: Beraberlik · M: Mağlubiyet · AG:
-              Atılan Gol · YG: Yenilen Gol · Av: Averaj · P: Puan
+              Atılan Gol · YG: Yenilen Gol · Av: Averaj · P: Puan · Form: Son 5
+              maç (soldan sağa eskiden yeniye)
             </p>
           </div>
         )}

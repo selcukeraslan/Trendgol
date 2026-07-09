@@ -31,7 +31,11 @@ import {
 } from "@/components/ui/form";
 
 const selectClass =
-  "flex h-9 w-full rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30";
+  "flex h-9 w-full rounded-lg border border-input bg-card px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50";
+
+// Native option'lar metin/zemin rengini güvenilir almaz; açıkça basıyoruz ki
+// koyu temada da okunur olsun.
+const optionClass = "bg-popover text-popover-foreground";
 
 function toDefaults(match?: Match): MatchFormValues {
   return {
@@ -87,6 +91,12 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
     [players, homeTeamId, awayTeamId],
   );
 
+  // Golcü listesinde oyuncu adının yanında takımını göstermek için.
+  const teamNameById = React.useMemo(
+    () => new Map(teams.map((team) => [team.id, team.name])),
+    [teams],
+  );
+
   function handleOpenChange(next: boolean) {
     setOpen(next);
     if (next) form.reset(toDefaults(match));
@@ -140,9 +150,15 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
                     <FormLabel>Ev Sahibi</FormLabel>
                     <FormControl>
                       <select className={selectClass} {...field}>
-                        <option value="">Seçin</option>
+                        <option className={optionClass} value="">
+                          Seçin
+                        </option>
                         {teams.map((team) => (
-                          <option key={team.id} value={team.id}>
+                          <option
+                            key={team.id}
+                            className={optionClass}
+                            value={team.id}
+                          >
                             {team.name}
                           </option>
                         ))}
@@ -160,9 +176,15 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
                     <FormLabel>Deplasman</FormLabel>
                     <FormControl>
                       <select className={selectClass} {...field}>
-                        <option value="">Seçin</option>
+                        <option className={optionClass} value="">
+                          Seçin
+                        </option>
                         {teams.map((team) => (
-                          <option key={team.id} value={team.id}>
+                          <option
+                            key={team.id}
+                            className={optionClass}
+                            value={team.id}
+                          >
                             {team.name}
                           </option>
                         ))}
@@ -240,7 +262,7 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
                     <select className={selectClass} {...field}>
                       {(Object.keys(matchStatusLabels) as MatchStatus[]).map(
                         (st) => (
-                          <option key={st} value={st}>
+                          <option key={st} className={optionClass} value={st}>
                             {matchStatusLabels[st]}
                           </option>
                         ),
@@ -326,10 +348,19 @@ export function MatchForm({ trigger, teams, players, match }: MatchFormProps) {
                               <FormItem className="flex-1">
                                 <FormControl>
                                   <select className={selectClass} {...field}>
-                                    <option value="">Oyuncu seçin</option>
+                                    <option className={optionClass} value="">
+                                      Oyuncu seçin
+                                    </option>
                                     {matchPlayers.map((player) => (
-                                      <option key={player.id} value={player.id}>
+                                      <option
+                                        key={player.id}
+                                        className={optionClass}
+                                        value={player.id}
+                                      >
                                         {player.name}
+                                        {teamNameById.has(player.teamId)
+                                          ? ` (${teamNameById.get(player.teamId)})`
+                                          : ""}
                                       </option>
                                     ))}
                                   </select>

@@ -2,10 +2,11 @@
 
 import * as React from "react";
 
-import type { Match, SiteSettings, Team } from "@/types";
+import type { BlogPost, Match, SiteSettings, Team } from "@/types";
 import { getSiteSettings } from "@/lib/repository/settingsRepository";
 import { getTeams } from "@/lib/repository/teamRepository";
 import { getMatches } from "@/lib/repository/matchRepository";
+import { getPublishedBlogPosts } from "@/lib/repository/blogRepository";
 import { calculateStandings } from "@/lib/standings";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
@@ -23,21 +24,24 @@ interface LandingData {
   settings: SiteSettings;
   teams: Team[];
   matches: Match[];
+  blogPosts: BlogPost[];
 }
 
 export default function Home() {
   const { data, loading, error } = useAsyncData<LandingData>(async () => {
-    const [settings, teams, matches] = await Promise.all([
+    const [settings, teams, matches, blogPosts] = await Promise.all([
       getSiteSettings(),
       getTeams(),
       getMatches(),
+      getPublishedBlogPosts(),
     ]);
-    return { settings, teams, matches };
+    return { settings, teams, matches, blogPosts };
   }, []);
 
   const settings = data?.settings;
   const teams = React.useMemo(() => data?.teams ?? [], [data]);
   const matches = React.useMemo(() => data?.matches ?? [], [data]);
+  const blogPosts = React.useMemo(() => data?.blogPosts ?? [], [data]);
   const standings = React.useMemo(
     () => calculateStandings(teams, matches),
     [teams, matches],
@@ -45,7 +49,7 @@ export default function Home() {
 
   return (
     <>
-      <Hero settings={settings} />
+      <Hero settings={settings} posts={blogPosts} />
       {error ? (
         <Container className="py-12">
           <ErrorState message={error} />
@@ -56,10 +60,10 @@ export default function Home() {
         </Container>
       ) : (
         <>
-          <ParticipationTerms settings={settings} />
           <UpcomingMatches matches={matches} teams={teams} />
           <StandingsSummary standings={standings} teams={teams} />
           <HowToJoin />
+          <ParticipationTerms settings={settings} />
           <SponsorArea sponsors={settings?.sponsors} />
           <CtaSection />
         </>

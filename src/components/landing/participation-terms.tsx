@@ -10,6 +10,16 @@ const terms = [
   "Tüm maçlar lig kurallarına göre oynanır.",
 ];
 
+/** Gösterilebilir bir tutar mı? Boş, "—" veya sıfır değerler gizlenir. */
+function hasAmount(value?: string): boolean {
+  if (!value) return false;
+  const trimmed = value.trim();
+  if (trimmed === "" || trimmed === "—") return false;
+  const digits = trimmed.replace(/\D/g, "");
+  if (digits.length > 0 && Number(digits) === 0) return false;
+  return true;
+}
+
 export function ParticipationTerms({ settings }: { settings?: SiteSettings }) {
   const cards = [
     {
@@ -55,7 +65,11 @@ export function ParticipationTerms({ settings }: { settings?: SiteSettings }) {
                 }
                 aria-hidden="true"
               />
-              <div className="font-heading text-xl font-bold">{card.value}</div>
+              {hasAmount(card.value) ? (
+                <div className="font-heading text-xl font-bold">
+                  {card.value}
+                </div>
+              ) : null}
               <div className="mt-1 text-sm font-medium">{card.label}</div>
               <div className="text-xs text-muted-foreground">{card.hint}</div>
             </div>
