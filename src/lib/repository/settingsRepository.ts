@@ -1,4 +1,13 @@
-import type { HowToJoinStep, SiteContact, SiteSettings } from "@/types";
+import type {
+  AboutValue,
+  HowToJoinStep,
+  SiteContact,
+  SiteSettings,
+} from "@/types";
+import {
+  DEFAULT_ABOUT_CONTENT,
+  DEFAULT_ABOUT_VALUES,
+} from "@/lib/content-defaults";
 import { getSupabase } from "@/lib/supabase/client";
 
 const TABLE = "site_settings";
@@ -13,6 +22,21 @@ interface SettingsRow {
   entry_fee: string;
   per_match_fee: string;
   about_text: string;
+  about_eyebrow: string | null;
+  about_title: string | null;
+  about_subtitle: string | null;
+  about_story_title: string | null;
+  about_team_label: string | null;
+  about_prize_pool_label: string | null;
+  about_season: string | null;
+  about_season_label: string | null;
+  about_mission_title: string | null;
+  about_mission_text: string | null;
+  about_values_title: string | null;
+  about_values: AboutValue[] | null;
+  about_cta_title: string | null;
+  about_cta_text: string | null;
+  about_cta_button_label: string | null;
   contact: SiteContact;
   sponsors: string[] | null;
   rules_pdf_url: string | null;
@@ -32,6 +56,29 @@ function fromRow(r: SettingsRow): SiteSettings {
     entryFee: r.entry_fee,
     perMatchFee: r.per_match_fee,
     aboutText: r.about_text,
+    aboutEyebrow: r.about_eyebrow ?? DEFAULT_ABOUT_CONTENT.eyebrow,
+    aboutTitle: r.about_title ?? DEFAULT_ABOUT_CONTENT.title,
+    aboutSubtitle: r.about_subtitle ?? DEFAULT_ABOUT_CONTENT.subtitle,
+    aboutStoryTitle: r.about_story_title ?? DEFAULT_ABOUT_CONTENT.storyTitle,
+    aboutTeamLabel: r.about_team_label ?? DEFAULT_ABOUT_CONTENT.teamLabel,
+    aboutPrizePoolLabel:
+      r.about_prize_pool_label ?? DEFAULT_ABOUT_CONTENT.prizePoolLabel,
+    aboutSeason: r.about_season ?? DEFAULT_ABOUT_CONTENT.season,
+    aboutSeasonLabel:
+      r.about_season_label ?? DEFAULT_ABOUT_CONTENT.seasonLabel,
+    aboutMissionTitle:
+      r.about_mission_title ?? DEFAULT_ABOUT_CONTENT.missionTitle,
+    aboutMissionText:
+      r.about_mission_text ?? DEFAULT_ABOUT_CONTENT.missionText,
+    aboutValuesTitle:
+      r.about_values_title ?? DEFAULT_ABOUT_CONTENT.valuesTitle,
+    aboutValues: DEFAULT_ABOUT_VALUES.map(
+      (fallback, index) => r.about_values?.[index] ?? fallback,
+    ),
+    aboutCtaTitle: r.about_cta_title ?? DEFAULT_ABOUT_CONTENT.ctaTitle,
+    aboutCtaText: r.about_cta_text ?? DEFAULT_ABOUT_CONTENT.ctaText,
+    aboutCtaButtonLabel:
+      r.about_cta_button_label ?? DEFAULT_ABOUT_CONTENT.ctaButtonLabel,
     contact: r.contact,
     sponsors: r.sponsors ?? [],
     rulesPdfUrl: r.rules_pdf_url ?? undefined,
@@ -71,6 +118,33 @@ export async function updateSiteSettings(
   if (input.entryFee !== undefined) patch.entry_fee = input.entryFee;
   if (input.perMatchFee !== undefined) patch.per_match_fee = input.perMatchFee;
   if (input.aboutText !== undefined) patch.about_text = input.aboutText;
+  if (input.aboutEyebrow !== undefined)
+    patch.about_eyebrow = input.aboutEyebrow;
+  if (input.aboutTitle !== undefined) patch.about_title = input.aboutTitle;
+  if (input.aboutSubtitle !== undefined)
+    patch.about_subtitle = input.aboutSubtitle;
+  if (input.aboutStoryTitle !== undefined)
+    patch.about_story_title = input.aboutStoryTitle;
+  if (input.aboutTeamLabel !== undefined)
+    patch.about_team_label = input.aboutTeamLabel;
+  if (input.aboutPrizePoolLabel !== undefined)
+    patch.about_prize_pool_label = input.aboutPrizePoolLabel;
+  if (input.aboutSeason !== undefined) patch.about_season = input.aboutSeason;
+  if (input.aboutSeasonLabel !== undefined)
+    patch.about_season_label = input.aboutSeasonLabel;
+  if (input.aboutMissionTitle !== undefined)
+    patch.about_mission_title = input.aboutMissionTitle;
+  if (input.aboutMissionText !== undefined)
+    patch.about_mission_text = input.aboutMissionText;
+  if (input.aboutValuesTitle !== undefined)
+    patch.about_values_title = input.aboutValuesTitle;
+  if (input.aboutValues !== undefined) patch.about_values = input.aboutValues;
+  if (input.aboutCtaTitle !== undefined)
+    patch.about_cta_title = input.aboutCtaTitle;
+  if (input.aboutCtaText !== undefined)
+    patch.about_cta_text = input.aboutCtaText;
+  if (input.aboutCtaButtonLabel !== undefined)
+    patch.about_cta_button_label = input.aboutCtaButtonLabel;
   if (input.contact !== undefined) patch.contact = input.contact;
   if (input.sponsors !== undefined) patch.sponsors = input.sponsors;
   if (input.rulesPdfUrl !== undefined)

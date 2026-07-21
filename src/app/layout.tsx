@@ -23,7 +23,7 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   metadataBase: new URL("https://trendgolig.com"),
   title: {
-    default: "TrendgoLig — Para Ödüllü Futbol Ligi",
+    default: "TrendgoLig",
     template: "%s | TrendgoLig",
   },
   description:

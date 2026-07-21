@@ -6,6 +6,10 @@ import { Award, Scale, ShieldCheck, Target, Trophy, Users } from "lucide-react";
 import type { SiteSettings, Team } from "@/types";
 import { getSiteSettings } from "@/lib/repository/settingsRepository";
 import { getTeams } from "@/lib/repository/teamRepository";
+import {
+  DEFAULT_ABOUT_CONTENT,
+  DEFAULT_ABOUT_VALUES,
+} from "@/lib/content-defaults";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { PageHeader } from "@/components/common/page-header";
@@ -17,23 +21,7 @@ interface AboutData {
   teams: Team[];
 }
 
-const values = [
-  {
-    icon: Scale,
-    title: "Adil Rekabet",
-    text: "Şeffaf fikstür ve tarafsız hakemlik ile her takıma eşit şans.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Güvenilir Ödeme",
-    text: "Katılım ve ödül süreçleri net, izlenebilir ve güvence altında.",
-  },
-  {
-    icon: Target,
-    title: "Profesyonel Organizasyon",
-    text: "Amatör futbolu profesyonel bir işleyişle buluşturuyoruz.",
-  },
-];
+const valueIcons = [Scale, ShieldCheck, Target];
 
 export default function AboutPage() {
   const { data } = useAsyncData<AboutData>(async () => {
@@ -43,23 +31,39 @@ export default function AboutPage() {
 
   const settings = data?.settings;
   const teamCount = data?.teams.length ?? 0;
+  const values =
+    settings?.aboutValues && settings.aboutValues.length > 0
+      ? settings.aboutValues
+      : DEFAULT_ABOUT_VALUES;
 
   const stats = [
-    { icon: Users, label: "Takım", value: teamCount > 0 ? `${teamCount}` : "—" },
+    {
+      icon: Users,
+      label: settings?.aboutTeamLabel || DEFAULT_ABOUT_CONTENT.teamLabel,
+      value: teamCount > 0 ? `${teamCount}` : "—",
+    },
     {
       icon: Trophy,
-      label: "Ödül Havuzu",
+      label:
+        settings?.aboutPrizePoolLabel ||
+        DEFAULT_ABOUT_CONTENT.prizePoolLabel,
       value: settings?.prizePool ?? "—",
     },
-    { icon: Award, label: "Sezon", value: "2026" },
+    {
+      icon: Award,
+      label: settings?.aboutSeasonLabel || DEFAULT_ABOUT_CONTENT.seasonLabel,
+      value: settings?.aboutSeason || DEFAULT_ABOUT_CONTENT.season,
+    },
   ];
 
   return (
     <>
       <PageHeader
-        eyebrow="Hakkımızda"
-        title="Biz Kimiz"
-        description="Halı saha futbolunu profesyonel bir lig deneyimine dönüştürüyoruz."
+        eyebrow={settings?.aboutEyebrow || DEFAULT_ABOUT_CONTENT.eyebrow}
+        title={settings?.aboutTitle || DEFAULT_ABOUT_CONTENT.title}
+        description={
+          settings?.aboutSubtitle || DEFAULT_ABOUT_CONTENT.subtitle
+        }
       />
 
       <Container className="space-y-16 py-12">
@@ -67,7 +71,7 @@ export default function AboutPage() {
         <section className="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-center">
           <div className="space-y-4">
             <h2 className="font-heading text-2xl font-bold tracking-tight">
-              Lig Hikayemiz
+              {settings?.aboutStoryTitle || DEFAULT_ABOUT_CONTENT.storyTitle}
             </h2>
             <p className="text-pretty leading-relaxed text-muted-foreground">
               {settings?.aboutText ??
@@ -99,51 +103,53 @@ export default function AboutPage() {
         <section className="rounded-2xl border border-border bg-card/50 p-8 text-center">
           <Target className="mx-auto mb-3 size-7 text-brand" aria-hidden="true" />
           <h2 className="font-heading text-2xl font-bold tracking-tight">
-            Misyonumuz
+            {settings?.aboutMissionTitle || DEFAULT_ABOUT_CONTENT.missionTitle}
           </h2>
           <p className="mx-auto mt-3 max-w-2xl text-pretty text-muted-foreground">
-            Her seviyeden futbolseveri, adil ve güvenilir bir ortamda
-            buluşturmak; kazananı sahada belli olan, ödülü hak edenin aldığı bir
-            lig deneyimi sunmak.
+            {settings?.aboutMissionText || DEFAULT_ABOUT_CONTENT.missionText}
           </p>
         </section>
 
         {/* Değerler */}
         <section>
           <h2 className="mb-6 text-center font-heading text-2xl font-bold tracking-tight">
-            Neden Bize Güvenmelisiniz?
+            {settings?.aboutValuesTitle || DEFAULT_ABOUT_CONTENT.valuesTitle}
           </h2>
           <div className="grid gap-5 sm:grid-cols-3">
-            {values.map((value) => (
-              <div
-                key={value.title}
-                className="rounded-xl border border-border bg-card p-6"
-              >
-                <value.icon
-                  className="mb-3 size-6 text-brand"
-                  aria-hidden="true"
-                />
-                <h3 className="font-heading text-lg font-bold">
-                  {value.title}
-                </h3>
-                <p className="mt-2 text-sm text-muted-foreground">
-                  {value.text}
-                </p>
-              </div>
-            ))}
+            {values.slice(0, 3).map((value, index) => {
+              const ValueIcon = valueIcons[index] ?? Target;
+              return (
+                <div
+                  key={`${value.title}-${index}`}
+                  className="rounded-xl border border-border bg-card p-6"
+                >
+                  <ValueIcon
+                    className="mb-3 size-6 text-brand"
+                    aria-hidden="true"
+                  />
+                  <h3 className="font-heading text-lg font-bold">
+                    {value.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-muted-foreground">
+                    {value.text}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </section>
 
         {/* CTA */}
         <section className="flex flex-col items-center gap-4 rounded-2xl border border-brand/30 bg-brand/5 p-8 text-center">
           <h2 className="font-heading text-2xl font-bold tracking-tight">
-            Sen de aramıza katıl
+            {settings?.aboutCtaTitle || DEFAULT_ABOUT_CONTENT.ctaTitle}
           </h2>
           <p className="max-w-md text-muted-foreground">
-            Takımını kaydet, sahaya çık ve ödül havuzundan payını al.
+            {settings?.aboutCtaText || DEFAULT_ABOUT_CONTENT.ctaText}
           </p>
           <Link href="/iletisim" className={cn(buttonVariants({ size: "lg" }))}>
-            Takımını Kaydet
+            {settings?.aboutCtaButtonLabel ||
+              DEFAULT_ABOUT_CONTENT.ctaButtonLabel}
           </Link>
         </section>
       </Container>

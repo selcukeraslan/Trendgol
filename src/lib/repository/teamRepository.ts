@@ -60,7 +60,7 @@ export async function createTeam(
       captain: input.captain,
       description: input.description,
       photo_url: input.photoUrl ?? null,
-      group_name: input.group ?? null,
+      group_name: input.group || null,
     })
     .select("*")
     .single();

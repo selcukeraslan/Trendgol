@@ -7,8 +7,13 @@ export type MatchStatus = "scheduled" | "played" | "postponed";
 /** Oyuncu mevkii. */
 export type PlayerPosition = "goalkeeper" | "defender" | "midfielder" | "forward";
 
-/** Turnuva grubu. Atanmamışsa (undefined) takım grupsuzdur. */
-export type TeamGroup = "A" | "B";
+/** Kullanıcı tarafından oluşturulan lig/grup adı. */
+export type TeamGroup = string;
+
+export interface LeagueGroup {
+  name: string;
+  createdAt: string;
+}
 
 export interface Team {
   id: string;
@@ -20,7 +25,7 @@ export interface Team {
   captain: string;
   description: string;
   photoUrl?: string;
-  /** A veya B grubu; boşsa grupsuz. */
+  /** Yönetilebilir grup/lig adı; boşsa grupsuz. */
   group?: TeamGroup;
   createdAt: string; // ISO
 }
@@ -132,6 +137,12 @@ export interface HowToJoinStep {
   text: string;
 }
 
+/** "Biz Kimiz" sayfasındaki güven/değer kartı (ikon sıraya göre sabittir). */
+export interface AboutValue {
+  title: string;
+  text: string;
+}
+
 export interface SiteSettings {
   /** Site logosu görsel URL'i. Boşsa "HS" rozeti gösterilir. */
   logoUrl?: string;
@@ -142,6 +153,22 @@ export interface SiteSettings {
   entryFee: string;
   perMatchFee: string;
   aboutText: string;
+  /** "Biz Kimiz" sayfasının düzenlenebilir içerikleri. */
+  aboutEyebrow: string;
+  aboutTitle: string;
+  aboutSubtitle: string;
+  aboutStoryTitle: string;
+  aboutTeamLabel: string;
+  aboutPrizePoolLabel: string;
+  aboutSeason: string;
+  aboutSeasonLabel: string;
+  aboutMissionTitle: string;
+  aboutMissionText: string;
+  aboutValuesTitle: string;
+  aboutValues: AboutValue[];
+  aboutCtaTitle: string;
+  aboutCtaText: string;
+  aboutCtaButtonLabel: string;
   contact: SiteContact;
   /** Sponsor / iş ortağı adları — ana sayfada gösterilir. */
   sponsors: string[];

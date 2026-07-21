@@ -7,7 +7,9 @@ import {
   CalendarDays,
   Users,
   ListOrdered,
+  Layers,
   Newspaper,
+  MessageSquare,
   Settings,
 } from "lucide-react";
 
@@ -37,8 +39,14 @@ export const adminNavItems: AdminNavItem[] = [
   { label: "Genel Bakış", href: "/admin", icon: LayoutDashboard },
   { label: "Fikstür", href: "/admin/fikstur", icon: CalendarDays },
   { label: "Takımlar", href: "/admin/takimlar", icon: Users },
+  { label: "Gruplar", href: "/admin/gruplar", icon: Layers },
   { label: "Puan Durumu", href: "/admin/puan-durumu", icon: ListOrdered },
   { label: "Blog", href: "/admin/blog", icon: Newspaper },
+  {
+    label: "Başvurular",
+    href: "/admin/basvurular",
+    icon: MessageSquare,
+  },
   { label: "Site Ayarları", href: "/admin/ayarlar", icon: Settings },
 ];
 

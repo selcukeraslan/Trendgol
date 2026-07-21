@@ -1,28 +1,27 @@
 import type { Match, Team } from "@/types";
 
-/** Bir takım grubunun anahtarı. "none" = grupsuz. */
-export type GroupKey = "A" | "B" | "none";
+const NO_GROUP_KEY = "__ungrouped__";
+const CROSS_GROUP_KEY = "__cross_group__";
 
-/** Bir maç grubunun anahtarı. "cross" = farklı gruplardan takımlar. */
-export type MatchGroupKey = GroupKey | "cross";
+/** Dinamik grup adı veya sistemin özel grup anahtarı. */
+export type GroupKey = string;
+export type MatchGroupKey = string;
 
-const GROUP_LABELS: Record<MatchGroupKey, string> = {
-  A: "A Grubu",
-  B: "B Grubu",
-  none: "Grupsuz",
-  cross: "Gruplar arası",
-};
-
-/** Sıralı gösterim düzeni. */
-const GROUP_ORDER: MatchGroupKey[] = ["A", "B", "none", "cross"];
+function assignedGroupNames(teams: Team[]): string[] {
+  return [...new Set(teams.flatMap((team) => (team.group ? [team.group] : [])))]
+    .sort((a, b) => a.localeCompare(b, "tr"));
+}
 
 export function groupLabel(key: MatchGroupKey): string {
-  return GROUP_LABELS[key];
+  if (key === NO_GROUP_KEY) return "Grupsuz";
+  if (key === CROSS_GROUP_KEY) return "Gruplar arası";
+  // Eski A/B verisinin görünümünü koru; özel adları olduğu gibi göster.
+  return /^[A-Z]$/.test(key) ? `${key} Grubu` : key;
 }
 
 /** Herhangi bir takıma grup atanmış mı? */
 export function hasGroups(teams: Team[]): boolean {
-  return teams.some((t) => t.group);
+  return teams.some((team) => Boolean(team.group));
 }
 
 export interface TeamGroupBucket {
@@ -31,27 +30,30 @@ export interface TeamGroupBucket {
   teams: Team[];
 }
 
-/**
- * Takımları gruplara böler. Hiç grup yoksa tek "tümü" kovası döner (başlıksız).
- * Grup varsa A, B ve (varsa) Grupsuz kovaları — yalnızca dolu olanlar.
- */
+/** Takımları kullanıcı tarafından oluşturulan grup adlarına göre böler. */
 export function groupTeams(teams: Team[]): TeamGroupBucket[] {
   if (!hasGroups(teams)) {
-    return [{ key: "none", label: "", teams }];
+    return [{ key: NO_GROUP_KEY, label: "", teams }];
   }
-  const buckets: TeamGroupBucket[] = [];
-  const a = teams.filter((t) => t.group === "A");
-  const b = teams.filter((t) => t.group === "B");
-  const none = teams.filter((t) => !t.group);
-  if (a.length) buckets.push({ key: "A", label: GROUP_LABELS.A, teams: a });
-  if (b.length) buckets.push({ key: "B", label: GROUP_LABELS.B, teams: b });
-  if (none.length) {
-    buckets.push({ key: "none", label: GROUP_LABELS.none, teams: none });
+
+  const buckets = assignedGroupNames(teams).map((name) => ({
+    key: name,
+    label: groupLabel(name),
+    teams: teams.filter((team) => team.group === name),
+  }));
+  const ungrouped = teams.filter((team) => !team.group);
+
+  if (ungrouped.length > 0) {
+    buckets.push({
+      key: NO_GROUP_KEY,
+      label: groupLabel(NO_GROUP_KEY),
+      teams: ungrouped,
+    });
   }
   return buckets;
 }
 
-/** Bir maçın grubunu takımlarından türetir. */
+/** Bir maçın grubunu iki takımın atamasından türetir. */
 export function matchGroupKey(
   match: Match,
   teamById: Map<string, Team>,
@@ -59,8 +61,8 @@ export function matchGroupKey(
   const home = teamById.get(match.homeTeamId)?.group;
   const away = teamById.get(match.awayTeamId)?.group;
   if (home && away && home === away) return home;
-  if (!home && !away) return "none";
-  return "cross";
+  if (!home && !away) return NO_GROUP_KEY;
+  return CROSS_GROUP_KEY;
 }
 
 export interface MatchGroupBucket {
@@ -69,28 +71,32 @@ export interface MatchGroupBucket {
   matches: Match[];
 }
 
-/**
- * Maçları gruba göre böler (gösterim sırasıyla). Hiç grup yoksa tek başlıksız
- * kova döner.
- */
+/** Maçları dinamik gruplara, grupsuzlara ve gruplar arası maçlara böler. */
 export function groupMatches(
   matches: Match[],
   teams: Team[],
 ): MatchGroupBucket[] {
   if (!hasGroups(teams)) {
-    return [{ key: "none", label: "", matches }];
+    return [{ key: NO_GROUP_KEY, label: "", matches }];
   }
-  const teamById = new Map(teams.map((t) => [t.id, t]));
-  const map = new Map<MatchGroupKey, Match[]>();
+
+  const teamById = new Map(teams.map((team) => [team.id, team]));
+  const grouped = new Map<MatchGroupKey, Match[]>();
   for (const match of matches) {
     const key = matchGroupKey(match, teamById);
-    const list = map.get(key) ?? [];
-    list.push(match);
-    map.set(key, list);
+    grouped.set(key, [...(grouped.get(key) ?? []), match]);
   }
-  return GROUP_ORDER.filter((key) => map.has(key)).map((key) => ({
-    key,
-    label: GROUP_LABELS[key],
-    matches: map.get(key) ?? [],
-  }));
+
+  const order = [
+    ...assignedGroupNames(teams),
+    NO_GROUP_KEY,
+    CROSS_GROUP_KEY,
+  ];
+  return order
+    .filter((key) => grouped.has(key))
+    .map((key) => ({
+      key,
+      label: groupLabel(key),
+      matches: grouped.get(key) ?? [],
+    }));
 }
