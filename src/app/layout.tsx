@@ -21,7 +21,7 @@ const oswald = Oswald({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://trendgolig.com"),
+  metadataBase: new URL("https://trendgoligi.com"),
   title: {
     default: "TrendgoLig",
     template: "%s | TrendgoLig",

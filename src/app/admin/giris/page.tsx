@@ -69,7 +69,7 @@ export default function AdminLoginPage() {
                   <FormControl>
                     <Input
                       type="email"
-                      placeholder="admin@trendgolig.com"
+                      placeholder="admin@trendgoligi.com"
                       {...field}
                     />
                   </FormControl>
