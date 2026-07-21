@@ -22,6 +22,7 @@ interface StandingsData {
 }
 
 export default function StandingsPage() {
+  const [selectedGroup, setSelectedGroup] = React.useState("");
   const { data, loading, error } = useAsyncData<StandingsData>(async () => {
     const [teams, matches] = await Promise.all([getTeams(), getMatches()]);
     return { teams, matches };
@@ -30,6 +31,13 @@ export default function StandingsPage() {
   const teams = React.useMemo(() => data?.teams ?? [], [data]);
   const matches = React.useMemo(() => data?.matches ?? [], [data]);
   const buckets = React.useMemo(() => groupTeams(teams), [teams]);
+  const visibleBuckets = React.useMemo(
+    () =>
+      selectedGroup
+        ? buckets.filter((bucket) => bucket.key === selectedGroup)
+        : buckets,
+    [buckets, selectedGroup],
+  );
 
   return (
     <>
@@ -51,7 +59,27 @@ export default function StandingsPage() {
           />
         ) : (
           <div className="space-y-8">
-            {buckets.map((bucket) => (
+            {buckets.length > 1 || buckets.some((bucket) => bucket.label) ? (
+              <div className="flex justify-end">
+                <label className="flex items-center gap-2 text-sm">
+                  <span className="text-muted-foreground">Lig / Grup:</span>
+                  <select
+                    value={selectedGroup}
+                    onChange={(event) => setSelectedGroup(event.target.value)}
+                    className="h-9 rounded-lg border border-input bg-card px-3 text-sm text-foreground outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+                  >
+                    <option value="">Tümü</option>
+                    {buckets.map((bucket) => (
+                      <option key={bucket.key} value={bucket.key}>
+                        {bucket.label || "Tüm Takımlar"}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            ) : null}
+
+            {visibleBuckets.map((bucket) => (
               <div key={bucket.key} className="space-y-3">
                 {bucket.label ? (
                   <h2 className="font-heading text-xl font-bold tracking-tight">
