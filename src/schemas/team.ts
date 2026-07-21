@@ -12,8 +12,8 @@ export const teamSchema = z.object({
   description: z.string(),
   logoUrl: z.string().optional(),
   photoUrl: z.string().optional(),
-  // "" = grupsuz.
-  group: z.enum(["A", "B"]).or(z.literal("")),
+  // "" = grupsuz; diğer değerler adminin oluşturduğu grup adlarıdır.
+  group: z.string().max(80, "Grup adı en fazla 80 karakter olabilir."),
 });
 
 export type TeamFormValues = z.infer<typeof teamSchema>;

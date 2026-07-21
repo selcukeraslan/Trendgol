@@ -1,7 +1,40 @@
 // Ayarlardan boş bırakılan içerik blokları için varsayılan metinler.
 // Hem public bileşenler (fallback) hem admin formu (ön dolum) buradan okur.
 
-import type { HowToJoinStep } from "@/types";
+import type { AboutValue, HowToJoinStep } from "@/types";
+
+export const DEFAULT_ABOUT_CONTENT = {
+  eyebrow: "Hakkımızda",
+  title: "Biz Kimiz",
+  subtitle: "Halı saha futbolunu profesyonel bir lig deneyimine dönüştürüyoruz.",
+  storyTitle: "Lig Hikayemiz",
+  teamLabel: "Takım",
+  prizePoolLabel: "Ödül Havuzu",
+  season: "2026",
+  seasonLabel: "Sezon",
+  missionTitle: "Misyonumuz",
+  missionText:
+    "Her seviyeden futbolseveri, adil ve güvenilir bir ortamda buluşturmak; kazananı sahada belli olan, ödülü hak edenin aldığı bir lig deneyimi sunmak.",
+  valuesTitle: "Neden Bize Güvenmelisiniz?",
+  ctaTitle: "Sen de aramıza katıl",
+  ctaText: "Takımını kaydet, sahaya çık ve ödül havuzundan payını al.",
+  ctaButtonLabel: "Takımını Kaydet",
+} as const;
+
+export const DEFAULT_ABOUT_VALUES: AboutValue[] = [
+  {
+    title: "Adil Rekabet",
+    text: "Şeffaf fikstür ve tarafsız hakemlik ile her takıma eşit şans.",
+  },
+  {
+    title: "Güvenilir Ödeme",
+    text: "Katılım ve ödül süreçleri net, izlenebilir ve güvence altında.",
+  },
+  {
+    title: "Profesyonel Organizasyon",
+    text: "Amatör futbolu profesyonel bir işleyişle buluşturuyoruz.",
+  },
+];
 
 export const DEFAULT_PARTICIPATION_TERMS = [
   "Her takım en az 7 oyuncudan oluşmalı.",

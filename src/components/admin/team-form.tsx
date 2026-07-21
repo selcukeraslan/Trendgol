@@ -5,7 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 
-import type { Team } from "@/types";
+import type { LeagueGroup, Team } from "@/types";
 import { teamSchema, type TeamFormValues } from "@/schemas/team";
 import { useTeamStore } from "@/store/teamStore";
 import { Button } from "@/components/ui/button";
@@ -49,9 +49,10 @@ function toDefaults(team?: Team): TeamFormValues {
 interface TeamFormProps {
   trigger: React.ReactElement;
   team?: Team;
+  groups: LeagueGroup[];
 }
 
-export function TeamForm({ trigger, team }: TeamFormProps) {
+export function TeamForm({ trigger, team, groups }: TeamFormProps) {
   const [open, setOpen] = React.useState(false);
   const add = useTeamStore((s) => s.add);
   const edit = useTeamStore((s) => s.edit);
@@ -67,8 +68,8 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
   }
 
   async function onSubmit(values: TeamFormValues) {
-    // "" (grupsuz) → undefined.
-    const payload = { ...values, group: values.group || undefined };
+    // Boş string repository tarafından veritabanında NULL'a çevrilir.
+    const payload = { ...values, group: values.group };
     if (team) {
       await edit(team.id, payload);
       toast.success("Takım güncellendi.");
@@ -149,12 +150,15 @@ export function TeamForm({ trigger, team }: TeamFormProps) {
                       <option className={optionClass} value="">
                         Grupsuz
                       </option>
-                      <option className={optionClass} value="A">
-                        A Grubu
-                      </option>
-                      <option className={optionClass} value="B">
-                        B Grubu
-                      </option>
+                      {groups.map((group) => (
+                        <option
+                          key={group.name}
+                          className={optionClass}
+                          value={group.name}
+                        >
+                          {group.name}
+                        </option>
+                      ))}
                     </select>
                   </FormControl>
                   <FormMessage />

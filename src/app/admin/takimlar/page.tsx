@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { Pencil, Plus, Trash2, Users } from "lucide-react";
 
 import { useTeamStore } from "@/store/teamStore";
+import { useGroupStore } from "@/store/groupStore";
 import { usePlayerStore } from "@/store/playerStore";
 import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/admin/data-table";
@@ -18,15 +19,19 @@ import type { Team } from "@/types";
 export default function AdminTeamsPage() {
   const loadTeams = useTeamStore((s) => s.load);
   const loadPlayers = usePlayerStore((s) => s.load);
+  const loadGroups = useGroupStore((s) => s.load);
   const teams = useTeamStore((s) => s.items);
   const loaded = useTeamStore((s) => s.loaded);
   const removeTeam = useTeamStore((s) => s.remove);
   const players = usePlayerStore((s) => s.items);
+  const groups = useGroupStore((s) => s.items);
+  const groupsLoaded = useGroupStore((s) => s.loaded);
 
   React.useEffect(() => {
     void loadTeams();
     void loadPlayers();
-  }, [loadTeams, loadPlayers]);
+    void loadGroups();
+  }, [loadTeams, loadPlayers, loadGroups]);
 
   const playerCount = React.useMemo(() => {
     const counts = new Map<string, number>();
@@ -54,6 +59,7 @@ export default function AdminTeamsPage() {
       ),
     },
     { header: "Kaptan", cell: (team) => team.captain },
+    { header: "Grup", cell: (team) => team.group || "Grupsuz" },
     {
       header: "Oyuncu",
       className: "text-center",
@@ -73,6 +79,7 @@ export default function AdminTeamsPage() {
           </p>
         </div>
         <TeamForm
+          groups={groups}
           trigger={
             <Button>
               <Plus className="size-4" aria-hidden="true" />
@@ -82,7 +89,7 @@ export default function AdminTeamsPage() {
         />
       </div>
 
-      {!loaded ? (
+      {!loaded || !groupsLoaded ? (
         <LoadingSkeleton variant="row" count={6} />
       ) : (
         <DataTable
@@ -102,6 +109,7 @@ export default function AdminTeamsPage() {
               </Link>
               <TeamForm
                 team={team}
+                groups={groups}
                 trigger={
                   <Button variant="ghost" size="sm" aria-label="Düzenle">
                     <Pencil className="size-4" aria-hidden="true" />

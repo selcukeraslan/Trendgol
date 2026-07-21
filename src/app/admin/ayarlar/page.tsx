@@ -8,6 +8,8 @@ import { Plus, Trash2 } from "lucide-react";
 
 import { settingsSchema, type SettingsFormValues } from "@/schemas/settings";
 import {
+  DEFAULT_ABOUT_CONTENT,
+  DEFAULT_ABOUT_VALUES,
   DEFAULT_CTA_TEXT,
   DEFAULT_CTA_TITLE,
   DEFAULT_FOOTER_DESCRIPTION,
@@ -39,6 +41,21 @@ const emptyDefaults: SettingsFormValues = {
   entryFee: "",
   perMatchFee: "",
   aboutText: "",
+  aboutEyebrow: DEFAULT_ABOUT_CONTENT.eyebrow,
+  aboutTitle: DEFAULT_ABOUT_CONTENT.title,
+  aboutSubtitle: DEFAULT_ABOUT_CONTENT.subtitle,
+  aboutStoryTitle: DEFAULT_ABOUT_CONTENT.storyTitle,
+  aboutTeamLabel: DEFAULT_ABOUT_CONTENT.teamLabel,
+  aboutPrizePoolLabel: DEFAULT_ABOUT_CONTENT.prizePoolLabel,
+  aboutSeason: DEFAULT_ABOUT_CONTENT.season,
+  aboutSeasonLabel: DEFAULT_ABOUT_CONTENT.seasonLabel,
+  aboutMissionTitle: DEFAULT_ABOUT_CONTENT.missionTitle,
+  aboutMissionText: DEFAULT_ABOUT_CONTENT.missionText,
+  aboutValuesTitle: DEFAULT_ABOUT_CONTENT.valuesTitle,
+  aboutValues: DEFAULT_ABOUT_VALUES,
+  aboutCtaTitle: DEFAULT_ABOUT_CONTENT.ctaTitle,
+  aboutCtaText: DEFAULT_ABOUT_CONTENT.ctaText,
+  aboutCtaButtonLabel: DEFAULT_ABOUT_CONTENT.ctaButtonLabel,
   sponsors: "",
   contact: { phone: "", email: "", address: "", instagram: "", whatsapp: "" },
   rulesPdfUrl: "",
@@ -249,17 +266,255 @@ export default function AdminSettingsPage() {
 
           <Separator />
 
-          {/* Hakkımızda */}
+          {/* Biz Kimiz */}
           <section className="space-y-4">
-            <h2 className="font-heading font-bold">Hakkımızda</h2>
+            <div>
+              <h2 className="font-heading font-bold">Biz Kimiz Sayfası</h2>
+              <p className="text-xs text-muted-foreground">
+                Sayfa başlığını, hikâyeyi, istatistik etiketlerini, misyonu,
+                güven kartlarını ve çağrı alanını düzenleyin.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="aboutEyebrow"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Üst Etiket</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="aboutTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sayfa Başlığı</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="aboutSubtitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Sayfa Açıklaması</FormLabel>
+                  <FormControl>
+                    <Textarea rows={2} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="aboutStoryTitle"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Hikâye Başlığı</FormLabel>
+                  <FormControl>
+                    <Input {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <FormField
               control={form.control}
               name="aboutText"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Hakkımızda Metni</FormLabel>
+                  <FormLabel>Hikâye Metni</FormLabel>
                   <FormControl>
                     <Textarea rows={5} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <FormField
+                control={form.control}
+                name="aboutTeamLabel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Takım Etiketi</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="aboutPrizePoolLabel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Ödül Etiketi</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="aboutSeason"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sezon Değeri</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="aboutSeasonLabel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Sezon Etiketi</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="aboutMissionTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Misyon Başlığı</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="aboutValuesTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Güven Alanı Başlığı</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="aboutMissionText"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Misyon Metni</FormLabel>
+                  <FormControl>
+                    <Textarea rows={3} {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <div className="space-y-3">
+              <FormLabel>Güven Kartları</FormLabel>
+              {DEFAULT_ABOUT_VALUES.map((_, index) => (
+                <div
+                  key={index}
+                  className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[1fr_2fr]"
+                >
+                  <FormField
+                    control={form.control}
+                    name={`aboutValues.${index}.title`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Input placeholder="Kart başlığı" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name={`aboutValues.${index}.text`}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormControl>
+                          <Textarea
+                            rows={2}
+                            placeholder="Kart açıklaması"
+                            {...field}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              ))}
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField
+                control={form.control}
+                name="aboutCtaTitle"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Çağrı Başlığı</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="aboutCtaButtonLabel"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Buton Metni</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
+            <FormField
+              control={form.control}
+              name="aboutCtaText"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Çağrı Açıklaması</FormLabel>
+                  <FormControl>
+                    <Textarea rows={2} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
