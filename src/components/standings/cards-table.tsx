@@ -17,9 +17,9 @@ interface CardsTableProps {
 /** Kart istatistikleri tablosu — veriler maç kart kayıtlarından türetilir. */
 export function CardsTable({ cards }: CardsTableProps) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-border">
+    <div className="max-h-[52.5rem] overflow-auto rounded-xl border border-border">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow className="bg-muted/40">
             <TableHead className="w-10 text-center">#</TableHead>
             <TableHead>Oyuncu</TableHead>
@@ -40,7 +40,10 @@ export function CardsTable({ cards }: CardsTableProps) {
         </TableHeader>
         <TableBody>
           {cards.map((row, index) => (
-            <TableRow key={row.playerId} className="hover:bg-muted/30">
+            <TableRow
+              key={row.playerId}
+              className="h-10 hover:bg-muted/30"
+            >
               <TableCell className="text-center font-medium tabular-nums text-muted-foreground">
                 {index + 1}
               </TableCell>

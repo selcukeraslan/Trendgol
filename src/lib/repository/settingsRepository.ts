@@ -1,12 +1,15 @@
 import type {
   AboutValue,
   HowToJoinStep,
+  InfoCard,
   SiteContact,
   SiteSettings,
 } from "@/types";
 import {
   DEFAULT_ABOUT_CONTENT,
+  DEFAULT_ABOUT_STORY_CARDS,
   DEFAULT_ABOUT_VALUES,
+  DEFAULT_PARTICIPATION_CARDS,
 } from "@/lib/content-defaults";
 import { getSupabase } from "@/lib/supabase/client";
 
@@ -26,10 +29,7 @@ interface SettingsRow {
   about_title: string | null;
   about_subtitle: string | null;
   about_story_title: string | null;
-  about_team_label: string | null;
-  about_prize_pool_label: string | null;
-  about_season: string | null;
-  about_season_label: string | null;
+  about_story_cards: InfoCard[] | null;
   about_mission_title: string | null;
   about_mission_text: string | null;
   about_values_title: string | null;
@@ -42,6 +42,7 @@ interface SettingsRow {
   sponsors: string[] | null;
   rules_pdf_url: string | null;
   participation_terms: string[] | null;
+  participation_cards: InfoCard[] | null;
   how_to_join_steps: HowToJoinStep[] | null;
   cta_title: string | null;
   cta_text: string | null;
@@ -61,12 +62,7 @@ function fromRow(r: SettingsRow): SiteSettings {
     aboutTitle: r.about_title ?? DEFAULT_ABOUT_CONTENT.title,
     aboutSubtitle: r.about_subtitle ?? DEFAULT_ABOUT_CONTENT.subtitle,
     aboutStoryTitle: r.about_story_title ?? DEFAULT_ABOUT_CONTENT.storyTitle,
-    aboutTeamLabel: r.about_team_label ?? DEFAULT_ABOUT_CONTENT.teamLabel,
-    aboutPrizePoolLabel:
-      r.about_prize_pool_label ?? DEFAULT_ABOUT_CONTENT.prizePoolLabel,
-    aboutSeason: r.about_season ?? DEFAULT_ABOUT_CONTENT.season,
-    aboutSeasonLabel:
-      r.about_season_label ?? DEFAULT_ABOUT_CONTENT.seasonLabel,
+    aboutStoryCards: r.about_story_cards ?? DEFAULT_ABOUT_STORY_CARDS,
     aboutMissionTitle:
       r.about_mission_title ?? DEFAULT_ABOUT_CONTENT.missionTitle,
     aboutMissionText:
@@ -85,6 +81,8 @@ function fromRow(r: SettingsRow): SiteSettings {
     sponsors: r.sponsors ?? [],
     rulesPdfUrl: r.rules_pdf_url ?? undefined,
     participationTerms: r.participation_terms ?? [],
+    participationCards:
+      r.participation_cards ?? DEFAULT_PARTICIPATION_CARDS,
     howToJoinSteps: r.how_to_join_steps ?? [],
     ctaTitle: r.cta_title ?? "",
     ctaText: r.cta_text ?? "",
@@ -127,13 +125,8 @@ export async function updateSiteSettings(
     patch.about_subtitle = input.aboutSubtitle;
   if (input.aboutStoryTitle !== undefined)
     patch.about_story_title = input.aboutStoryTitle;
-  if (input.aboutTeamLabel !== undefined)
-    patch.about_team_label = input.aboutTeamLabel;
-  if (input.aboutPrizePoolLabel !== undefined)
-    patch.about_prize_pool_label = input.aboutPrizePoolLabel;
-  if (input.aboutSeason !== undefined) patch.about_season = input.aboutSeason;
-  if (input.aboutSeasonLabel !== undefined)
-    patch.about_season_label = input.aboutSeasonLabel;
+  if (input.aboutStoryCards !== undefined)
+    patch.about_story_cards = input.aboutStoryCards;
   if (input.aboutMissionTitle !== undefined)
     patch.about_mission_title = input.aboutMissionTitle;
   if (input.aboutMissionText !== undefined)
@@ -155,6 +148,8 @@ export async function updateSiteSettings(
     patch.rules_pdf_url = input.rulesPdfUrl || null;
   if (input.participationTerms !== undefined)
     patch.participation_terms = input.participationTerms;
+  if (input.participationCards !== undefined)
+    patch.participation_cards = input.participationCards;
   if (input.howToJoinSteps !== undefined)
     patch.how_to_join_steps = input.howToJoinSteps;
   if (input.ctaTitle !== undefined) patch.cta_title = input.ctaTitle;

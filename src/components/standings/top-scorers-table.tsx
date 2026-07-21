@@ -21,9 +21,9 @@ interface TopScorersTableProps {
 /** Gol krallığı tablosu — veriler maç golcü kayıtlarından türetilir. */
 export function TopScorersTable({ scorers, highlight = 3 }: TopScorersTableProps) {
   return (
-    <div className="overflow-x-auto rounded-xl border border-border">
+    <div className="max-h-[52.5rem] overflow-auto rounded-xl border border-border">
       <Table>
-        <TableHeader>
+        <TableHeader className="sticky top-0 z-10 bg-card">
           <TableRow className="bg-muted/40">
             <TableHead className="w-10 text-center">#</TableHead>
             <TableHead>Oyuncu</TableHead>
@@ -36,7 +36,10 @@ export function TopScorersTable({ scorers, highlight = 3 }: TopScorersTableProps
             const rank = index + 1;
             const isTop = highlight > 0 && rank <= highlight;
             return (
-              <TableRow key={scorer.playerId} className="hover:bg-muted/30">
+              <TableRow
+                key={scorer.playerId}
+                className="h-10 hover:bg-muted/30"
+              >
                 <TableCell className="text-center font-medium tabular-nums">
                   <span
                     className={cn(

@@ -1,7 +1,22 @@
-import { CheckCircle2, Coins, FileText, Trophy, Wallet } from "lucide-react";
+import {
+  Award,
+  CheckCircle2,
+  Coins,
+  FileText,
+  Target,
+  Trophy,
+  Users,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 
-import type { SiteSettings } from "@/types";
-import { DEFAULT_PARTICIPATION_TERMS } from "@/lib/content-defaults";
+import type { InfoCardIcon, SiteSettings } from "@/types";
+import {
+  DEFAULT_PARTICIPATION_CARDS,
+  DEFAULT_PARTICIPATION_TERMS,
+} from "@/lib/content-defaults";
+import { resolveInfoCardValue } from "@/lib/info-cards";
+import { cn } from "@/lib/utils";
 import { Section } from "@/components/common/section";
 
 /** Gösterilebilir bir tutar mı? Boş, "—" veya sıfır değerler gizlenir. */
@@ -14,67 +29,78 @@ function hasAmount(value?: string): boolean {
   return true;
 }
 
-export function ParticipationTerms({ settings }: { settings?: SiteSettings }) {
+const infoCardIcons: Record<InfoCardIcon, LucideIcon> = {
+  users: Users,
+  trophy: Trophy,
+  award: Award,
+  wallet: Wallet,
+  coins: Coins,
+  target: Target,
+};
+
+export function ParticipationTerms({
+  settings,
+  teamCount = 0,
+}: {
+  settings?: SiteSettings;
+  teamCount?: number;
+}) {
   const terms =
     settings?.participationTerms && settings.participationTerms.length > 0
       ? settings.participationTerms
       : DEFAULT_PARTICIPATION_TERMS;
   const rulesPdfUrl = settings?.rulesPdfUrl;
 
-  const cards = [
-    {
-      icon: Wallet,
-      label: "Katılım Ücreti",
-      value: settings?.entryFee ?? "—",
-      hint: "Sezon başı, tek seferlik",
-    },
-    {
-      icon: Coins,
-      label: "Maç Başı Ücret",
-      value: settings?.perMatchFee ?? "—",
-      hint: "Her maç öncesi",
-    },
-    {
-      icon: Trophy,
-      label: "Ödül Havuzu",
-      value: settings?.prizePool ?? "—",
-      hint: "Sezon sonu şampiyona",
-      highlight: true,
-    },
-  ];
+  const configuredCards = settings
+    ? settings.participationCards
+    : DEFAULT_PARTICIPATION_CARDS;
+  const cards = configuredCards.map((card) => ({
+    ...card,
+    icon: infoCardIcons[card.icon] ?? Target,
+    value: resolveInfoCardValue(card, settings, teamCount),
+  }));
 
   return (
     <Section>
-      <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+      <div
+        className={cn(
+          "grid gap-10 lg:items-center",
+          cards.length > 0 && "lg:grid-cols-2",
+        )}
+      >
         {/* Ücretler */}
-        <div className="grid gap-4 sm:grid-cols-3">
-          {cards.map((card) => (
-            <div
-              key={card.label}
-              className={
-                "rounded-xl border bg-card p-5 text-center " +
-                (card.highlight
-                  ? "border-gold/40 bg-gold/5"
-                  : "border-border")
-              }
-            >
-              <card.icon
+        {cards.length > 0 ? (
+          <div className="grid grid-cols-[repeat(auto-fit,minmax(9rem,1fr))] gap-4">
+            {cards.map((card, index) => (
+              <div
+                key={`${card.label}-${index}`}
                 className={
-                  "mx-auto mb-2 size-6 " +
-                  (card.highlight ? "text-gold" : "text-brand")
+                  "rounded-xl border bg-card p-5 text-center " +
+                  (card.highlighted
+                    ? "border-gold/40 bg-gold/5"
+                    : "border-border")
                 }
-                aria-hidden="true"
-              />
-              {hasAmount(card.value) ? (
-                <div className="font-heading text-xl font-bold">
-                  {card.value}
+              >
+                <card.icon
+                  className={
+                    "mx-auto mb-2 size-6 " +
+                    (card.highlighted ? "text-gold" : "text-brand")
+                  }
+                  aria-hidden="true"
+                />
+                {hasAmount(card.value) ? (
+                  <div className="font-heading text-xl font-bold">
+                    {card.value}
+                  </div>
+                ) : null}
+                <div className="mt-1 text-sm font-medium">{card.label}</div>
+                <div className="text-xs text-muted-foreground">
+                  {card.hint}
                 </div>
-              ) : null}
-              <div className="mt-1 text-sm font-medium">{card.label}</div>
-              <div className="text-xs text-muted-foreground">{card.hint}</div>
-            </div>
-          ))}
-        </div>
+              </div>
+            ))}
+          </div>
+        ) : null}
 
         {/* Katılım şartları */}
         <div>

@@ -21,6 +21,35 @@ import {
 import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { publicNavItems, siteName } from "@/config/navigation";
 
+const liveStreamUrl = "https://www.youtube.com/@trendgolligi";
+
+function LiveStreamLink({
+  mobile = false,
+  className,
+  ...props
+}: { mobile?: boolean } & React.ComponentProps<"a">) {
+  return (
+    <a
+      href={liveStreamUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "flex shrink-0 items-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold text-foreground transition-colors hover:bg-red-500/10 hover:text-red-500",
+        mobile ? "px-3 py-2.5" : "px-2 py-2",
+        className,
+      )}
+      {...props}
+    >
+      <span className="relative flex size-2.5" aria-hidden="true">
+        <span className="absolute inline-flex size-full animate-ping rounded-full bg-red-500 opacity-75" />
+        <span className="relative inline-flex size-2.5 rounded-full bg-red-600" />
+      </span>
+      Canlı Yayın
+      <span className="sr-only">(YouTube&apos;da yeni sekmede açılır)</span>
+    </a>
+  );
+}
+
 function isActive(pathname: string, href: string) {
   if (href === "/") return pathname === "/";
   return pathname === href || pathname.startsWith(`${href}/`);
@@ -28,7 +57,10 @@ function isActive(pathname: string, href: string) {
 
 function BrandLogo({ logoUrl }: { logoUrl?: string }) {
   return (
-    <Link href="/" className="flex items-center gap-2 font-heading">
+    <Link
+      href="/"
+      className="flex shrink-0 items-center gap-2 whitespace-nowrap font-heading"
+    >
       {logoUrl ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -56,18 +88,18 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-16 w-full max-w-6xl items-center justify-between gap-2 px-4 sm:px-5 lg:px-6">
         <BrandLogo logoUrl={settings?.logoUrl} />
 
         {/* Masaüstü menü */}
-        <nav className="hidden items-center gap-1 lg:flex">
+        <nav className="hidden shrink-0 items-center min-[1100px]:flex">
           {publicNavItems.map((item) => (
             <Link
               key={item.href}
               href={item.href}
               aria-current={isActive(pathname, item.href) ? "page" : undefined}
               className={cn(
-                "rounded-md px-3 py-2 text-sm font-medium transition-colors hover:text-foreground",
+                "shrink-0 whitespace-nowrap rounded-md px-2 py-2 text-sm font-medium transition-colors hover:text-foreground",
                 isActive(pathname, item.href)
                   ? "text-foreground"
                   : "text-muted-foreground",
@@ -76,9 +108,10 @@ export function Navbar() {
               {item.label}
             </Link>
           ))}
+          <LiveStreamLink />
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <ThemeToggle />
           <Link
             href="/iletisim"
@@ -97,7 +130,7 @@ export function Navbar() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="lg:hidden"
+                  className="min-[1100px]:hidden"
                   aria-label="Menüyü aç"
                 >
                   <Menu className="size-5" aria-hidden="true" />
@@ -130,6 +163,7 @@ export function Navbar() {
                     }
                   />
                 ))}
+                <SheetClose render={<LiveStreamLink mobile />} />
                 <SheetClose
                   render={
                     <Link

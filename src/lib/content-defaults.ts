@@ -1,7 +1,7 @@
 // Ayarlardan boş bırakılan içerik blokları için varsayılan metinler.
 // Hem public bileşenler (fallback) hem admin formu (ön dolum) buradan okur.
 
-import type { AboutValue, HowToJoinStep } from "@/types";
+import type { AboutValue, HowToJoinStep, InfoCard } from "@/types";
 
 export const DEFAULT_ABOUT_CONTENT = {
   eyebrow: "Hakkımızda",
@@ -33,6 +33,60 @@ export const DEFAULT_ABOUT_VALUES: AboutValue[] = [
   {
     title: "Profesyonel Organizasyon",
     text: "Amatör futbolu profesyonel bir işleyişle buluşturuyoruz.",
+  },
+];
+
+export const DEFAULT_ABOUT_STORY_CARDS: InfoCard[] = [
+  {
+    label: "Takım",
+    value: "",
+    hint: "",
+    icon: "users",
+    valueSource: "teamCount",
+    highlighted: false,
+  },
+  {
+    label: "Ödül Havuzu",
+    value: "",
+    hint: "",
+    icon: "trophy",
+    valueSource: "prizePool",
+    highlighted: false,
+  },
+  {
+    label: "Sezon",
+    value: "2026",
+    hint: "",
+    icon: "award",
+    valueSource: "custom",
+    highlighted: false,
+  },
+];
+
+export const DEFAULT_PARTICIPATION_CARDS: InfoCard[] = [
+  {
+    label: "Katılım Ücreti",
+    value: "",
+    hint: "Sezon başı, tek seferlik",
+    icon: "wallet",
+    valueSource: "entryFee",
+    highlighted: false,
+  },
+  {
+    label: "Maç Başı Ücret",
+    value: "",
+    hint: "Her maç öncesi",
+    icon: "coins",
+    valueSource: "perMatchFee",
+    highlighted: false,
+  },
+  {
+    label: "Ödül Havuzu",
+    value: "",
+    hint: "Sezon sonu şampiyona",
+    icon: "trophy",
+    valueSource: "prizePool",
+    highlighted: true,
   },
 ];
 
