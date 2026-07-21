@@ -38,6 +38,7 @@ interface SettingsRow {
   about_cta_text: string | null;
   about_cta_button_label: string | null;
   contact: SiteContact;
+  map_embed_url: string | null;
   sponsors: string[] | null;
   rules_pdf_url: string | null;
   participation_terms: string[] | null;
@@ -80,6 +81,7 @@ function fromRow(r: SettingsRow): SiteSettings {
     aboutCtaButtonLabel:
       r.about_cta_button_label ?? DEFAULT_ABOUT_CONTENT.ctaButtonLabel,
     contact: r.contact,
+    mapEmbedUrl: r.map_embed_url ?? undefined,
     sponsors: r.sponsors ?? [],
     rulesPdfUrl: r.rules_pdf_url ?? undefined,
     participationTerms: r.participation_terms ?? [],
@@ -146,6 +148,8 @@ export async function updateSiteSettings(
   if (input.aboutCtaButtonLabel !== undefined)
     patch.about_cta_button_label = input.aboutCtaButtonLabel;
   if (input.contact !== undefined) patch.contact = input.contact;
+  if (input.mapEmbedUrl !== undefined)
+    patch.map_embed_url = input.mapEmbedUrl || null;
   if (input.sponsors !== undefined) patch.sponsors = input.sponsors;
   if (input.rulesPdfUrl !== undefined)
     patch.rules_pdf_url = input.rulesPdfUrl || null;
