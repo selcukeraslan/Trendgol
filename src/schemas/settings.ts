@@ -35,6 +35,11 @@ export const settingsSchema = z.object({
     instagram: z.string().optional(),
     whatsapp: z.string().optional(),
   }),
+  mapEmbedUrl: z
+    .string()
+    .url("Geçerli bir Google Maps bağlantısı girin.")
+    .or(z.literal(""))
+    .optional(),
   // Kurallar PDF'inin URL'i (dosya yüklemeden gelir).
   rulesPdfUrl: z.string().optional(),
   // Her satır bir madde; kayıtta string[]'e dönüştürülür.

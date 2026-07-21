@@ -170,6 +170,8 @@ export interface SiteSettings {
   aboutCtaText: string;
   aboutCtaButtonLabel: string;
   contact: SiteContact;
+  /** İletişim sayfasında gösterilen Google Maps iframe adresi. */
+  mapEmbedUrl?: string;
   /** Sponsor / iş ortağı adları — ana sayfada gösterilir. */
   sponsors: string[];
   /** Kurallar PDF'inin public URL'i. Boşsa "Kuralları İncele" linki gizlenir. */

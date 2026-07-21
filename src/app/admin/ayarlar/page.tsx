@@ -58,6 +58,7 @@ const emptyDefaults: SettingsFormValues = {
   aboutCtaButtonLabel: DEFAULT_ABOUT_CONTENT.ctaButtonLabel,
   sponsors: "",
   contact: { phone: "", email: "", address: "", instagram: "", whatsapp: "" },
+  mapEmbedUrl: "",
   rulesPdfUrl: "",
   participationTerms: "",
   howToJoinSteps: [],
@@ -108,6 +109,7 @@ export default function AdminSettingsPage() {
           instagram: settings.contact.instagram ?? "",
           whatsapp: settings.contact.whatsapp ?? "",
         },
+        mapEmbedUrl: settings.mapEmbedUrl ?? "",
         rulesPdfUrl: settings.rulesPdfUrl ?? "",
         participationTerms: terms.join("\n"),
         howToJoinSteps: steps,
@@ -624,6 +626,26 @@ export default function AdminSettingsPage() {
                 )}
               />
             </div>
+            <FormField
+              control={form.control}
+              name="mapEmbedUrl"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Google Maps Harita Bağlantısı</FormLabel>
+                  <FormControl>
+                    <Input
+                      placeholder="https://www.google.com/maps?...&output=embed"
+                      {...field}
+                    />
+                  </FormControl>
+                  <p className="text-xs text-muted-foreground">
+                    İletişim sayfasındaki haritayı değiştirir. Google Maps gömme
+                    bağlantısını kullanın.
+                  </p>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
           </section>
 
           <Separator />

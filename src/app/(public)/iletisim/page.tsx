@@ -110,13 +110,25 @@ export default function ContactPage() {
             </div>
           )}
 
-          {/* Harita placeholder */}
-          <div className="flex aspect-video w-full items-center justify-center rounded-xl border border-dashed border-border bg-muted/30">
-            <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
-              <MapPin className="size-7" aria-hidden="true" />
-              Harita yakında eklenecek
+          {data?.mapEmbedUrl ? (
+            <div className="aspect-video w-full overflow-hidden rounded-xl border border-border bg-muted/30">
+              <iframe
+                src={data.mapEmbedUrl}
+                title="TrendgoLig konumu"
+                className="h-full w-full border-0"
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                allowFullScreen
+              />
             </div>
-          </div>
+          ) : (
+            <div className="flex aspect-video w-full items-center justify-center rounded-xl border border-dashed border-border bg-muted/30">
+              <div className="flex flex-col items-center gap-2 text-sm text-muted-foreground">
+                <MapPin className="size-7" aria-hidden="true" />
+                Harita yakında eklenecek
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Form */}
