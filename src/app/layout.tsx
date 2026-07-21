@@ -27,11 +27,10 @@ export const metadata: Metadata = {
     template: "%s | TrendgoLig",
   },
   description:
-    "Ücretli katılımlı, para ödüllü halı saha futbol ligi. Fikstür, puan durumu, takımlar, blog ve daha fazlası.",
+    "TrendgoLig resmi web sitesi. Fikstür, puan durumu, takımlar, blog ve lig duyuruları.",
   keywords: [
     "halı saha ligi",
     "futbol ligi",
-    "para ödüllü lig",
     "halı saha turnuvası",
     "fikstür",
     "puan durumu",
@@ -40,9 +39,15 @@ export const metadata: Metadata = {
     type: "website",
     locale: "tr_TR",
     siteName: "TrendgoLig",
-    title: "TrendgoLig — Para Ödüllü Futbol Ligi",
+    title: "TrendgoLig",
     description:
-      "Ücretli katılımlı, para ödüllü halı saha futbol ligi. Takımını kur, sahaya çık, ödülü kap.",
+      "TrendgoLig resmi web sitesi. Fikstür, puan durumu, takımlar ve lig duyuruları.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "TrendgoLig",
+    description:
+      "TrendgoLig resmi web sitesi. Fikstür, puan durumu, takımlar ve lig duyuruları.",
   },
   robots: { index: true, follow: true },
 };
