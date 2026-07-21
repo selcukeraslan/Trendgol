@@ -143,6 +143,31 @@ export interface AboutValue {
   text: string;
 }
 
+export type InfoCardIcon =
+  | "users"
+  | "trophy"
+  | "award"
+  | "wallet"
+  | "coins"
+  | "target";
+
+export type InfoCardValueSource =
+  | "custom"
+  | "teamCount"
+  | "entryFee"
+  | "perMatchFee"
+  | "prizePool";
+
+/** Admin panelinden eklenip sıralanabilen hikâye ve katılım kartı. */
+export interface InfoCard {
+  label: string;
+  value: string;
+  hint: string;
+  icon: InfoCardIcon;
+  valueSource: InfoCardValueSource;
+  highlighted: boolean;
+}
+
 export interface SiteSettings {
   /** Site logosu görsel URL'i. Boşsa "HS" rozeti gösterilir. */
   logoUrl?: string;
@@ -158,10 +183,7 @@ export interface SiteSettings {
   aboutTitle: string;
   aboutSubtitle: string;
   aboutStoryTitle: string;
-  aboutTeamLabel: string;
-  aboutPrizePoolLabel: string;
-  aboutSeason: string;
-  aboutSeasonLabel: string;
+  aboutStoryCards: InfoCard[];
   aboutMissionTitle: string;
   aboutMissionText: string;
   aboutValuesTitle: string;
@@ -178,6 +200,8 @@ export interface SiteSettings {
   rulesPdfUrl?: string;
   /** Ana sayfa "Katılım Şartları" maddeleri. Boşsa varsayılanlar gösterilir. */
   participationTerms: string[];
+  /** Ana sayfadaki ücret/katılım bilgi kartları. */
+  participationCards: InfoCard[];
   /** "Nasıl Katılırım" adımları. Boşsa varsayılanlar gösterilir. */
   howToJoinSteps: HowToJoinStep[];
   /** Alt CTA bölümü başlığı ve metni. Boşsa varsayılanlar gösterilir. */

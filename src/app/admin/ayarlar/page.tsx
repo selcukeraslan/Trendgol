@@ -9,11 +9,13 @@ import { Plus, Trash2 } from "lucide-react";
 import { settingsSchema, type SettingsFormValues } from "@/schemas/settings";
 import {
   DEFAULT_ABOUT_CONTENT,
+  DEFAULT_ABOUT_STORY_CARDS,
   DEFAULT_ABOUT_VALUES,
   DEFAULT_CTA_TEXT,
   DEFAULT_CTA_TITLE,
   DEFAULT_FOOTER_DESCRIPTION,
   DEFAULT_HOW_TO_JOIN_STEPS,
+  DEFAULT_PARTICIPATION_CARDS,
   DEFAULT_PARTICIPATION_TERMS,
 } from "@/lib/content-defaults";
 import { useSettingsStore } from "@/store/settingsStore";
@@ -32,6 +34,7 @@ import {
 import { LoadingSkeleton } from "@/components/common/loading-skeleton";
 import { ImageUpload } from "@/components/common/image-upload";
 import { FileUpload } from "@/components/common/file-upload";
+import { InfoCardEditor } from "@/components/admin/info-card-editor";
 
 const emptyDefaults: SettingsFormValues = {
   logoUrl: "",
@@ -45,10 +48,7 @@ const emptyDefaults: SettingsFormValues = {
   aboutTitle: DEFAULT_ABOUT_CONTENT.title,
   aboutSubtitle: DEFAULT_ABOUT_CONTENT.subtitle,
   aboutStoryTitle: DEFAULT_ABOUT_CONTENT.storyTitle,
-  aboutTeamLabel: DEFAULT_ABOUT_CONTENT.teamLabel,
-  aboutPrizePoolLabel: DEFAULT_ABOUT_CONTENT.prizePoolLabel,
-  aboutSeason: DEFAULT_ABOUT_CONTENT.season,
-  aboutSeasonLabel: DEFAULT_ABOUT_CONTENT.seasonLabel,
+  aboutStoryCards: DEFAULT_ABOUT_STORY_CARDS,
   aboutMissionTitle: DEFAULT_ABOUT_CONTENT.missionTitle,
   aboutMissionText: DEFAULT_ABOUT_CONTENT.missionText,
   aboutValuesTitle: DEFAULT_ABOUT_CONTENT.valuesTitle,
@@ -61,6 +61,7 @@ const emptyDefaults: SettingsFormValues = {
   mapEmbedUrl: "",
   rulesPdfUrl: "",
   participationTerms: "",
+  participationCards: DEFAULT_PARTICIPATION_CARDS,
   howToJoinSteps: [],
   ctaTitle: "",
   ctaText: "",
@@ -345,60 +346,12 @@ export default function AdminSettingsPage() {
               )}
             />
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-              <FormField
-                control={form.control}
-                name="aboutTeamLabel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Takım Etiketi</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="aboutPrizePoolLabel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Ödül Etiketi</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="aboutSeason"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sezon Değeri</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="aboutSeasonLabel"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Sezon Etiketi</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <InfoCardEditor
+              form={form}
+              name="aboutStoryCards"
+              title="Hikâye Kartları"
+              description="Biz Kimiz sayfasındaki kartları ekleyin, düzenleyin veya kaldırın."
+            />
 
             <div className="grid gap-4 sm:grid-cols-2">
               <FormField
@@ -683,6 +636,14 @@ export default function AdminSettingsPage() {
           {/* Katılım Şartları */}
           <section className="space-y-4">
             <h2 className="font-heading font-bold">Katılım Şartları</h2>
+            <InfoCardEditor
+              form={form}
+              name="participationCards"
+              title="Katılım Kartları"
+              description="Ana sayfadaki katılım kartlarını hikâye kartlarından bağımsız yönetin."
+              showHint
+              showHighlight
+            />
             <FormField
               control={form.control}
               name="participationTerms"

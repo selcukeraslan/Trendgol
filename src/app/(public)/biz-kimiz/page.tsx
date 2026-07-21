@@ -1,15 +1,27 @@
 "use client";
 
 import Link from "next/link";
-import { Award, Scale, ShieldCheck, Target, Trophy, Users } from "lucide-react";
+import {
+  Award,
+  Coins,
+  Scale,
+  ShieldCheck,
+  Target,
+  Trophy,
+  Users,
+  Wallet,
+  type LucideIcon,
+} from "lucide-react";
 
-import type { SiteSettings, Team } from "@/types";
+import type { InfoCardIcon, SiteSettings, Team } from "@/types";
 import { getSiteSettings } from "@/lib/repository/settingsRepository";
 import { getTeams } from "@/lib/repository/teamRepository";
 import {
   DEFAULT_ABOUT_CONTENT,
+  DEFAULT_ABOUT_STORY_CARDS,
   DEFAULT_ABOUT_VALUES,
 } from "@/lib/content-defaults";
+import { resolveInfoCardValue } from "@/lib/info-cards";
 import { useAsyncData } from "@/hooks/use-async-data";
 import { Container } from "@/components/common/container";
 import { PageHeader } from "@/components/common/page-header";
@@ -22,6 +34,14 @@ interface AboutData {
 }
 
 const valueIcons = [Scale, ShieldCheck, Target];
+const infoCardIcons: Record<InfoCardIcon, LucideIcon> = {
+  users: Users,
+  trophy: Trophy,
+  award: Award,
+  wallet: Wallet,
+  coins: Coins,
+  target: Target,
+};
 
 export default function AboutPage() {
   const { data } = useAsyncData<AboutData>(async () => {
@@ -35,26 +55,14 @@ export default function AboutPage() {
     settings?.aboutValues && settings.aboutValues.length > 0
       ? settings.aboutValues
       : DEFAULT_ABOUT_VALUES;
-
-  const stats = [
-    {
-      icon: Users,
-      label: settings?.aboutTeamLabel || DEFAULT_ABOUT_CONTENT.teamLabel,
-      value: teamCount > 0 ? `${teamCount}` : "—",
-    },
-    {
-      icon: Trophy,
-      label:
-        settings?.aboutPrizePoolLabel ||
-        DEFAULT_ABOUT_CONTENT.prizePoolLabel,
-      value: settings?.prizePool ?? "—",
-    },
-    {
-      icon: Award,
-      label: settings?.aboutSeasonLabel || DEFAULT_ABOUT_CONTENT.seasonLabel,
-      value: settings?.aboutSeason || DEFAULT_ABOUT_CONTENT.season,
-    },
-  ];
+  const storyCards = settings
+    ? settings.aboutStoryCards
+    : DEFAULT_ABOUT_STORY_CARDS;
+  const stats = storyCards.map((card) => ({
+    ...card,
+    icon: infoCardIcons[card.icon] ?? Target,
+    value: resolveInfoCardValue(card, settings, teamCount),
+  }));
 
   return (
     <>
@@ -68,7 +76,12 @@ export default function AboutPage() {
 
       <Container className="space-y-16 py-12">
         {/* Hikaye */}
-        <section className="grid gap-10 lg:grid-cols-[1.5fr_1fr] lg:items-center">
+        <section
+          className={cn(
+            "grid gap-10 lg:items-center",
+            stats.length > 0 && "lg:grid-cols-[1.5fr_1fr]",
+          )}
+        >
           <div className="space-y-4">
             <h2 className="font-heading text-2xl font-bold tracking-tight">
               {settings?.aboutStoryTitle || DEFAULT_ABOUT_CONTENT.storyTitle}
@@ -78,25 +91,27 @@ export default function AboutPage() {
                 "Halı saha ligimiz; dostluğu, rekabeti ve futbol tutkusunu bir araya getiren ücretli katılımlı, para ödüllü bir organizasyondur."}
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-3">
-            {stats.map((stat) => (
-              <div
-                key={stat.label}
-                className="rounded-xl border border-border bg-card p-4 text-center"
-              >
-                <stat.icon
-                  className="mx-auto mb-2 size-5 text-brand"
-                  aria-hidden="true"
-                />
-                <div className="font-heading text-lg font-bold">
-                  {stat.value}
+          {stats.length > 0 ? (
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(7rem,1fr))] gap-3">
+              {stats.map((stat, index) => (
+                <div
+                  key={`${stat.label}-${index}`}
+                  className="rounded-xl border border-border bg-card p-4 text-center"
+                >
+                  <stat.icon
+                    className="mx-auto mb-2 size-5 text-brand"
+                    aria-hidden="true"
+                  />
+                  <div className="font-heading text-lg font-bold">
+                    {stat.value}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {stat.label}
+                  </div>
                 </div>
-                <div className="text-xs text-muted-foreground">
-                  {stat.label}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : null}
         </section>
 
         {/* Misyon */}

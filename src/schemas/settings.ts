@@ -1,6 +1,21 @@
 // Site ayarları formu doğrulama şeması (iç içe contact objesi dahil).
 import { z } from "zod";
 
+const infoCardSchema = z.object({
+  label: z.string(),
+  value: z.string(),
+  hint: z.string(),
+  icon: z.enum(["users", "trophy", "award", "wallet", "coins", "target"]),
+  valueSource: z.enum([
+    "custom",
+    "teamCount",
+    "entryFee",
+    "perMatchFee",
+    "prizePool",
+  ]),
+  highlighted: z.boolean(),
+});
+
 // Tüm alanlar opsiyoneldir; boş bırakılanlar için arayüzde makul varsayılanlar
 // gösterilir. E-posta yalnızca doldurulduğunda format doğrulaması yapılır.
 export const settingsSchema = z.object({
@@ -15,10 +30,7 @@ export const settingsSchema = z.object({
   aboutTitle: z.string(),
   aboutSubtitle: z.string(),
   aboutStoryTitle: z.string(),
-  aboutTeamLabel: z.string(),
-  aboutPrizePoolLabel: z.string(),
-  aboutSeason: z.string(),
-  aboutSeasonLabel: z.string(),
+  aboutStoryCards: z.array(infoCardSchema),
   aboutMissionTitle: z.string(),
   aboutMissionText: z.string(),
   aboutValuesTitle: z.string(),
@@ -44,6 +56,7 @@ export const settingsSchema = z.object({
   rulesPdfUrl: z.string().optional(),
   // Her satır bir madde; kayıtta string[]'e dönüştürülür.
   participationTerms: z.string().optional(),
+  participationCards: z.array(infoCardSchema),
   // Nasıl Katılırım adımları (ikonlar sabit, başlık/metin düzenlenir).
   howToJoinSteps: z.array(z.object({ title: z.string(), text: z.string() })),
   ctaTitle: z.string(),

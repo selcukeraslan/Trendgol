@@ -63,7 +63,7 @@ export default function Home() {
           <UpcomingMatches matches={matches} teams={teams} />
           <StandingsSummary standings={standings} teams={teams} />
           <HowToJoin settings={settings} />
-          <ParticipationTerms settings={settings} />
+          <ParticipationTerms settings={settings} teamCount={teams.length} />
           <SponsorArea sponsors={settings?.sponsors} />
           <CtaSection settings={settings} />
         </>
